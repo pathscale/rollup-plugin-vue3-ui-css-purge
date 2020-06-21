@@ -3,9 +3,10 @@ import path from "path";
 import fs from "fs-extra";
 import { rollup, InputOptions, OutputOptions } from "rollup";
 import dotenv from "dotenv";
-import { Options } from "../..";
 
 import vue3ui from "../../src";
+import { Options } from "../../src/types";
+
 import replace from "@rollup/plugin-replace";
 import commonjs from "@rollup/plugin-commonjs";
 import json from "@rollup/plugin-json";
