@@ -6316,11 +6316,6 @@ const render = /*#__PURE__*/_withId(function render(_ctx, _cache) {
   ]))
 });
 
-var e=[],t=[];function injector_215e68d0(n,r){if(n&&\\"undefined\\"!=typeof document){void 0===r&&(r={});var d,a=!0===r.prepend?\\"prepend\\":\\"append\\",i=\\"undefined\\"!=typeof r.singleTag&&r.singleTag,s=\\"undefined\\"!=typeof r.container?document.querySelector(r.container):document.getElementsByTagName(\\"head\\")[0];if(i){var u=e.indexOf(s);-1===u&&(u=e.push(s)-1,t[u]={}),d=t[u]&&t[u][a]?t[u][a]:t[u][a]=o();}else d=o();65279===n.charCodeAt(0)&&(n=n.substring(1)),d.styleSheet?d.styleSheet.cssText+=n:d.appendChild(document.createTextNode(n));}function o(){var e=document.createElement(\\"style\\");if(e.setAttribute(\\"type\\",\\"text/css\\"),r.attributes)for(var t=Object.keys(r.attributes),n=0;n<t.length;n++)e.setAttribute(t[n],r.attributes[t[n]]);var d=\\"prepend\\"===a?\\"afterbegin\\":\\"beforeend\\";return s.insertAdjacentElement(d,e),e}}
-
-const css_6c7f24a0 = \\"\\\\n.name[data-v-1967c734] {\\\\n  color: blue;\\\\n}\\\\n\\";
-injector_215e68d0(css_6c7f24a0);
-
 script.render = render;
 script.__scopeId = \\"data-v-1967c734\\";
 script.__file = \\"__tests__/fixtures/simple/Test.vue\\";

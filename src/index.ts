@@ -9,7 +9,7 @@ import { parseQuery } from "./utils";
 import { Options } from "./types";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const whitelistMap = require("../helpers/mappings.json") as Record<string, string[]>;
+const whitelistMap = require("../helper/mappings.json") as Record<string, string[]>;
 const debug = (...data: unknown[]) => void console.log(inspect(data, false, null));
 
 export default (options: Options = {}): Plugin => {
@@ -18,6 +18,7 @@ export default (options: Options = {}): Plugin => {
     options.exclude ?? ["**/node_modules/**"],
   );
 
+  // TODO: Utilize loaded whitelist
   console.log(whitelistMap);
 
   const plugin: Plugin = {
