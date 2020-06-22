@@ -4,7 +4,7 @@
 /node_modules/
 /.cache
 /.vscode
-/*.log
+*.log
 /.eslintcache
 /docs
 /helper/ui
