@@ -8,8 +8,18 @@
     "modal-header",
     "modal-title"
   ],
-  "Tab": ["TODO-navClasses", "is-active", "is-disabled", "tabs"],
-  "Tabs": ["TODO-navClasses", "is-active", "is-disabled", "tabs"],
+  "Tab": [
+    "TODO-navClasses",
+    "is-active",
+    "is-disabled",
+    "tabs"
+  ],
+  "Tabs": [
+    "TODO-navClasses",
+    "is-active",
+    "is-disabled",
+    "tabs"
+  ],
   "Tag": [
     "TODO-closeType",
     "TODO-size",
@@ -35,7 +45,12 @@
     "is-multiline",
     "is-square"
   ],
-  "Columns": ["column", "columns", "container", "is-centered"],
+  "Columns": [
+    "column",
+    "columns",
+    "container",
+    "is-centered"
+  ],
   "Login": [
     "TODO-passiveType-passive",
     "TODO-size",
@@ -123,11 +138,30 @@
     "control-label",
     "is-disabled"
   ],
-  "Container": ["TODO-type", "container"],
-  "Field": ["field", "label"],
-  "Input": ["control", "input"],
-  "Progress": ["TODO-newType", "progress", "progress-value", "progress-wrapper"],
-  "Select": ["TODO-spanClasses", "control", "is-expanded", "select"],
+  "Container": [
+    "TODO-type",
+    "container"
+  ],
+  "Field": [
+    "field",
+    "label"
+  ],
+  "Input": [
+    "control",
+    "input"
+  ],
+  "Progress": [
+    "TODO-newType",
+    "progress",
+    "progress-value",
+    "progress-wrapper"
+  ],
+  "Select": [
+    "TODO-spanClasses",
+    "control",
+    "is-expanded",
+    "select"
+  ],
   "Switch": [
     "TODO-passiveType-passive",
     "TODO-size",
