@@ -3,6 +3,7 @@ ncu -u --dep prod,dev --concurrency 16
 ncu -u --dep prod,dev --concurrency 16 -n -f `
 @pathscale/vue3-ui,`
 @pathscale/bulma-css-var-only,`
+@pathscale/bulma-pull-2981-css-var-only,`
 @vue/composition-api,`
 @vue/compiler-sfc,`
 @vue/runtime-dom,`

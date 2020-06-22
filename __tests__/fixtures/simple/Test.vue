@@ -1,13 +1,13 @@
 <template>
   <h1>
     Hello <span class="name">{{ name }}</span>
-    <LoginForm />
+    <Dummy />
   </h1>
 </template>
 
 <script>
 import { defineComponent } from "vue";
-import LoginForm from "./LoginForm.vue";
+import Dummy from "./Dummy.vue";
 export default defineComponent({
   props: { name: { type: String, default: "John" } },
 });

@@ -61,7 +61,7 @@ export async function write(data: WriteData): Promise<WriteResult> {
       commonjs(),
       vue3ui(data.options),
       vue(),
-      styles(),
+      styles({ mode: "extract" }),
     ],
   });
 
@@ -115,7 +115,7 @@ export function validate(data: TestData): void {
 
     for (const f of await res.js()) expect(f).toMatchSnapshot("js");
 
-    await expect(res.isCss()).resolves.toBeFalsy();
+    await expect(res.isCss()).resolves.toBeTruthy();
     for (const f of await res.css()) expect(f).toMatchSnapshot("css");
 
     await expect(res.isMap()).resolves.toBeFalsy();

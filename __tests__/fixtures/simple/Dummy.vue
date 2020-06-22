@@ -1,10 +1,10 @@
 <script>
 import { reactive, watchEffect, computed, onMounted } from "vue";
 // eslint-disable-next-line import/no-unresolved -- components does not exist in npm yet
-import { Input, Field, Button, Switch } from "@pathscale/vue3-ui";
+import { VField, VButton, VSwitch as Trigger } from "@pathscale/vue3-ui";
 
 const LoginForm = {
-  components: { Input, Field, Button, Switch },
+  components: { VField, VButton, Trigger },
   emits: ["login"],
   setup(props, { emit }) {
     const state = reactive({ email: "", password: "", remember: false });
@@ -36,26 +36,15 @@ export default LoginForm;
 
 <template>
   <form>
-    <Field label="Email">
-      <Input name="email" v-model="state.email" placeholder="Enter email" />
-    </Field>
-    <Field label="Password">
-      <Input
-        name="password"
-        type="password"
-        v-model="state.password"
-        placeholder="Enter password"
-      />
-    </Field>
-    <Field>
-      <Switch type="is-primary" passive-type="is-warning" v-model="state.remember">
+    <VField>
+      <Trigger type="is-primary" passive-type="is-warning" v-model="state.remember">
         Remember me
-      </Switch>
-    </Field>
-    <Field>
-      <Button type="is-success" @click="sendLogin" :disabled="!isValid">
+      </Trigger>
+    </VField>
+    <VField>
+      <VButton type="is-success" @click="sendLogin" :disabled="!isValid">
         Login
-      </Button>
-    </Field>
+      </VButton>
+    </VField>
   </form>
 </template>

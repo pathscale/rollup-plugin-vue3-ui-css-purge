@@ -7,5 +7,6 @@ validateMany("basic", [
   {
     title: "simple",
     input: "simple/index.js",
+    outputOpts: { assetFileNames: "[name][extname]" },
   },
 ]);
