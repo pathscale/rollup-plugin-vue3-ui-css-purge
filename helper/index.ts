@@ -30,7 +30,7 @@ async function gatherMappings(): Promise<void> {
     if (file !== "src") fs.removeSync(path.join(repoDir, file));
 
   const pattern = path.join(srcDir, "**", "*.vue").replace(/\\/g, "/");
-  const vueFiles = await fg(pattern);
+  const vueFiles = (await fg(pattern)).sort();
 
   for await (const file of vueFiles) {
     const bundle = await rollup({
@@ -45,7 +45,7 @@ async function gatherMappings(): Promise<void> {
     const whitelist = new Set(JSON.parse(whitelistAsset.source as string) as string[]);
     if (whitelist.size === 0) continue;
 
-    mappings[path.parse(file).name] = [...whitelist];
+    mappings[path.parse(file).name] = [...whitelist].sort();
   }
 
   fs.writeFileSync(path.join(__dirname, "mappings.json"), JSON.stringify(mappings, null, "  "));
