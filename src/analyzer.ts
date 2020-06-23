@@ -10,6 +10,9 @@ import { context } from "../helper/data";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const mappings = require("../helper/mappings.json") as Record<string, string[]>;
 
+const decamelize = (s: string): string =>
+  s.replace(/^(.)/, str => str.toLowerCase()).replace(/([A-Z])/g, str => `-${str.toLowerCase()}`);
+
 const analyzer = (options: Options): Plugin => {
   const isIncluded = createFilter(
     options.include ?? /\.vue$/,
@@ -28,7 +31,7 @@ const analyzer = (options: Options): Plugin => {
       onattribute(name, data) {
         if (!mappings[currentTag.slice(1)]) return;
         for (const from of Object.keys(context)) {
-          if (name !== from) continue;
+          if (name !== from && name !== decamelize(from)) continue;
           for (const cl of data.split(" ")) whitelist.add(cl);
         }
       },
