@@ -1,6 +1,6 @@
 {
   "name": "@pathscale/rollup-vue3-ui-css-purge",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Automatically remove unused CSS when using vue3-ui",
   "keywords": [
     "rollup",
@@ -29,6 +29,7 @@
   "scripts": {
     "prebuild": "shx rm -rf dist",
     "build": "rollup -c --environment NODE_ENV:production",
+    "postbuild": "shx cp helper/mappings.json dist",
     "commit": "commit",
     "prelint": "prettier -l --write .",
     "lint": "eslint --ext .ts,.js --fix .",

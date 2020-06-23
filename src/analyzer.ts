@@ -6,9 +6,14 @@ import { Options } from "./types";
 import * as htmlparser2 from "htmlparser2";
 import { context } from "../helper/data";
 
+const testing = process.env.NODE_ENV === "test";
+
 // TODO: Mappings should probably be managed inside vue3-ui to not require plugin re-release on every change
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const mappings = require("../helper/mappings.json") as Record<string, string[]>;
+const mappings = testing
+  ? // eslint-disable-next-line @typescript-eslint/no-var-requires
+    (require("../helper/mappings.json") as Record<string, string[]>)
+  : // eslint-disable-next-line @typescript-eslint/no-var-requires
+    (require("./mappings.json") as Record<string, string[]>);
 
 const decamelize = (s: string): string =>
   s.replace(/^(.)/, str => str.toLowerCase()).replace(/([A-Z])/g, str => `-${str.toLowerCase()}`);
