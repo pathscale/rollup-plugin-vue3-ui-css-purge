@@ -102,7 +102,7 @@
     "rollup": "^2.18.0",
     "rollup-plugin-dts": "^1.4.7",
     "rollup-plugin-node-externals": "^2.2.0",
-    "rollup-plugin-styles": "^3.8.2",
+    "rollup-plugin-styles": "^3.9.0",
     "rollup-plugin-vue": "^6.0.0-beta.6",
     "semantic-release": "^17.1.0",
     "shx": "^0.3.2",
