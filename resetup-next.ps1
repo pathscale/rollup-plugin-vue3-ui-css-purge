@@ -1,4 +1,5 @@
-ncu -u --dep prod,dev --concurrency 16
+ncu -u --dep prod,dev --concurrency 16 -x `
+vue-composable
 
 ncu -u --dep prod,dev --concurrency 16 -n -f `
 @pathscale/vue3-ui,`
