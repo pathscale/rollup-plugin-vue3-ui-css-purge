@@ -1,4 +1,4 @@
-/** `rollup-vue3-ui-css-purge`'s full option list */
+/** `rollup-plugin-vue3-ui-css-purge`'s full option list */
 export interface Options {
   /**
    * Files to include for processing

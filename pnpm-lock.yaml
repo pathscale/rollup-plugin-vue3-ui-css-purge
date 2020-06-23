@@ -1,15 +1,12 @@
 dependencies:
   '@fullhuman/postcss-purgecss': 2.3.0
   '@rollup/pluginutils': 3.1.0_rollup@2.18.0
-  acorn: 7.3.1
   acorn-walk: 7.2.0
   fs-extra: 9.0.1
   htmlparser2: 4.1.0
-  p-queue: 6.4.0
   postcss: 7.0.32
   querystring: 0.2.0
-  resolve: 1.17.0
-  source-map: 0.7.3
+  rollup: 2.18.0
   tslib: 2.0.0
 devDependencies:
   '@babel/core': 7.10.3
@@ -55,7 +52,6 @@ devDependencies:
   jest-circus: 26.1.0
   lint-staged: 10.2.11
   prettier: 2.0.5
-  rollup: 2.18.0
   rollup-plugin-dts: 1.4.7_rollup@2.18.0+typescript@3.9.5
   rollup-plugin-node-externals: 2.2.0_builtin-modules@3.1.0
   rollup-plugin-styles: 3.9.0_rollup@2.18.0
@@ -2146,6 +2142,7 @@ packages:
     resolution:
       integrity: sha512-OPdCF6GsMIP+Az+aWfAAOEt2/+iVDKE7oy6lJ098aoe59oAmK76qV6Gw60SbZ8jHuG2wH058GF4pLFbYamYrVA==
   /acorn/7.3.1:
+    dev: true
     engines:
       node: '>=0.4.0'
     hasBin: true
@@ -4126,6 +4123,7 @@ packages:
     resolution:
       integrity: sha512-kVscqXk4OCp68SZ0dkgEKVi6/8ij300KBWTJq32P/dYeWTSwK41WyTxalN1eRmA5Z9UU/LX9D7FWSmV9SAYx6g==
   /eventemitter3/4.0.4:
+    dev: true
     resolution:
       integrity: sha512-rlaVLnVxtxvoyLsQQFBx53YmXHDxRIzzTLbdfxqi4yocpSjAxXwkU0cScM5JgSKMqEhrZpnvQ2D9gjylR0AimQ==
   /exec-sh/0.3.4:
@@ -7309,6 +7307,7 @@ packages:
     resolution:
       integrity: sha512-ZBxxZ5sL2HghephhpGAQdoskxplTwr7ICaehZwLIlfL6acuVgZPm8yBNuRAFBGEqtD/hmUeq9eqLg2ys9Xr/yw==
   /p-finally/1.0.0:
+    dev: true
     engines:
       node: '>=4'
     resolution:
@@ -7381,6 +7380,7 @@ packages:
     dependencies:
       eventemitter3: 4.0.4
       p-timeout: 3.2.0
+    dev: true
     engines:
       node: '>=8'
     resolution:
@@ -7411,6 +7411,7 @@ packages:
   /p-timeout/3.2.0:
     dependencies:
       p-finally: 1.0.0
+    dev: true
     engines:
       node: '>=8'
     resolution:
@@ -7503,6 +7504,7 @@ packages:
     resolution:
       integrity: sha512-ojmeN0qd+y0jszEtoY48r0Peq5dwMEkIlCOu6Q5f41lfkswXuKtYrhgoTpLnyIcHm24Uhqx+5Tqm2InSwLhE6Q==
   /path-parse/1.0.6:
+    dev: true
     resolution:
       integrity: sha512-GSmOT2EbHrINBf9SR7CDELwlJ8AENk3Qn7OikK4nFYAu3Ote2+JYNVvkpAEQm3/TLNEJFD/xZJjzyxg3KBWOzw==
   /path-type/2.0.0:
@@ -8520,6 +8522,7 @@ packages:
   /resolve/1.17.0:
     dependencies:
       path-parse: 1.0.6
+    dev: true
     resolution:
       integrity: sha512-ic+7JYiV8Vi2yzQGFWOkiZD5Z9z7O2Zhm9XMaTxdJExKasieFCr+yXZ/WmXsckHiKl12ar0y6XiXDx3m4RHn1w==
   /responselike/1.0.2:
@@ -9055,6 +9058,7 @@ packages:
     resolution:
       integrity: sha512-UjgapumWlbMhkBgzT7Ykc5YXUT46F0iKu8SGXq0bcwP5dz/h0Plj6enJqjz1Zbq2l5WaqYnrVbwWOWMyF3F47g==
   /source-map/0.7.3:
+    dev: true
     engines:
       node: '>= 8'
     resolution:
@@ -10282,7 +10286,6 @@ specifiers:
   '@vue/compiler-sfc': ^3.0.0-beta.15
   '@vue/composition-api': ^0.6.6
   '@vue/runtime-dom': ^3.0.0-beta.15
-  acorn: ^7.3.1
   acorn-walk: ^7.2.0
   builtin-modules: ^3.1.0
   dotenv: ^8.2.0
@@ -10302,11 +10305,9 @@ specifiers:
   jest: ^26.1.0
   jest-circus: ^26.1.0
   lint-staged: ^10.2.11
-  p-queue: ^6.4.0
   postcss: ^7.0.32
   prettier: ^2.0.5
   querystring: ^0.2.0
-  resolve: ^1.17.0
   rollup: ^2.18.0
   rollup-plugin-dts: ^1.4.7
   rollup-plugin-node-externals: ^2.2.0
@@ -10314,7 +10315,6 @@ specifiers:
   rollup-plugin-vue: ^6.0.0-beta.6
   semantic-release: ^17.1.0
   shx: ^0.3.2
-  source-map: ^0.7.3
   ts-jest: ^26.1.1
   tslib: ^2.0.0
   typedoc: ^0.17.7
