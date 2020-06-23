@@ -1,5 +1,5 @@
 /** `rollup-vue3-ui-css-purge`'s full option list */
-export interface PublicOptions {
+export interface Options {
   /**
    * Files to include for processing
    * @default /\.vue$/
@@ -10,10 +10,6 @@ export interface PublicOptions {
    * @default ["**\\node_modules\\**"]
    */
   exclude?: ReadonlyArray<string | RegExp> | string | RegExp | null;
-}
-
-export interface Options extends PublicOptions {
-  analyzing: boolean;
 }
 
 /** Parsed Vue SFC query */

@@ -1,13 +1,13 @@
 // TODO: Figure out the allowed values for classes
 export const context = {
-  position: "TODO-position",
-  size: "TODO-size",
-  type: "TODO-type",
-  newType: "TODO-newType",
-  closeType: "TODO-closeType",
-  passiveType: "TODO-passiveType",
-  navClasses: "TODO-navClasses",
-  spanClasses: "TODO-spanClasses",
+  position: undefined,
+  size: undefined,
+  type: undefined,
+  newType: undefined,
+  closeType: undefined,
+  passiveType: undefined,
+  navClasses: undefined,
+  spanClasses: undefined,
 };
 
 export const truthy = {

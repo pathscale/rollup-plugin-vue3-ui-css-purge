@@ -9,21 +9,18 @@
     "modal-title"
   ],
   "Tab": [
-    "TODO-navClasses",
     "is-active",
+    "is-animated",
     "is-disabled",
     "tabs"
   ],
   "Tabs": [
-    "TODO-navClasses",
     "is-active",
+    "is-animated",
     "is-disabled",
     "tabs"
   ],
   "Tag": [
-    "TODO-closeType",
-    "TODO-size",
-    "TODO-type",
     "delete",
     "has-addons",
     "has-delete-icon",
@@ -35,9 +32,6 @@
     "tags"
   ],
   "Tooltip": [
-    "TODO-newType",
-    "TODO-position",
-    "TODO-size",
     "b-tooltip",
     "is-always",
     "is-animated",
@@ -52,9 +46,6 @@
     "is-centered"
   ],
   "Login": [
-    "TODO-passiveType-passive",
-    "TODO-size",
-    "TODO-type",
     "box",
     "button",
     "check",
@@ -92,9 +83,6 @@
     "navbar-start"
   ],
   "LoginForm": [
-    "TODO-passiveType-passive",
-    "TODO-size",
-    "TODO-type",
     "box",
     "button",
     "check",
@@ -116,8 +104,6 @@
     "switch"
   ],
   "Button": [
-    "TODO-size",
-    "TODO-type",
     "button",
     "is-active",
     "is-focused",
@@ -130,16 +116,14 @@
     "is-selected"
   ],
   "Checkbox": [
-    "TODO-size",
-    "TODO-type",
     "b-checkbox",
     "check",
     "checkbox",
     "control-label",
     "is-disabled"
   ],
+  "Collapse": [],
   "Container": [
-    "TODO-type",
     "container"
   ],
   "Field": [
@@ -151,103 +135,23 @@
     "input"
   ],
   "Progress": [
-    "TODO-newType",
     "progress",
     "progress-value",
     "progress-wrapper"
   ],
   "Select": [
-    "TODO-spanClasses",
     "control",
+    "has-background-dark",
+    "has-text-light",
     "is-expanded",
     "select"
   ],
   "Switch": [
-    "TODO-passiveType-passive",
-    "TODO-size",
-    "TODO-type",
     "check",
     "control-label",
     "is-disabled",
     "is-outlined",
     "is-rounded",
     "switch"
-  ],
-  "App": [
-    "TODO-closeType",
-    "TODO-navClasses",
-    "TODO-newType",
-    "TODO-passiveType-passive",
-    "TODO-position",
-    "TODO-size",
-    "TODO-spanClasses",
-    "TODO-type",
-    "b-checkbox",
-    "b-tooltip",
-    "box",
-    "button",
-    "buttons",
-    "check",
-    "checkbox",
-    "close",
-    "column",
-    "columns",
-    "container",
-    "control",
-    "control-label",
-    "delete",
-    "field",
-    "has-addons",
-    "has-delete-icon",
-    "has-ellipsis",
-    "hero",
-    "hero-body",
-    "input",
-    "is-3-widescreen",
-    "is-4-desktop",
-    "is-5-tablet",
-    "is-active",
-    "is-always",
-    "is-animated",
-    "is-centered",
-    "is-dashed",
-    "is-delete",
-    "is-disabled",
-    "is-expanded",
-    "is-focused",
-    "is-fullheight",
-    "is-fullwidth",
-    "is-hovered",
-    "is-inverted",
-    "is-light",
-    "is-loading",
-    "is-multiline",
-    "is-outlined",
-    "is-primary",
-    "is-rounded",
-    "is-selected",
-    "is-small",
-    "is-square",
-    "label",
-    "modal",
-    "modal-body",
-    "modal-content",
-    "modal-footer",
-    "modal-header",
-    "modal-title",
-    "navbar",
-    "navbar-brand",
-    "navbar-end",
-    "navbar-item",
-    "navbar-menu",
-    "navbar-start",
-    "progress",
-    "progress-value",
-    "progress-wrapper",
-    "select",
-    "switch",
-    "tabs",
-    "tag",
-    "tags"
   ]
 }
