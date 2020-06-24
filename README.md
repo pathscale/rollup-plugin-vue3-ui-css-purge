@@ -1,4 +1,4 @@
-# @pathscale/rollup-vue3-ui-css-purge
+# @pathscale/rollup-plugin-vue3-ui-css-purge
 
 Very WIP
 

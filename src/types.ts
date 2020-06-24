@@ -1,4 +1,4 @@
-/** `@pathscale/rollup-vue3-ui-css-purge`'s full option list */
+/** `@pathscale/rollup-plugin-vue3-ui-css-purge`'s full option list */
 export interface Options {
   /**
    * Files to include for processing

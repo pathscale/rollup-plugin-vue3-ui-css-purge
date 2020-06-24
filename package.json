@@ -1,6 +1,6 @@
 {
-  "name": "@pathscale/rollup-vue3-ui-css-purge",
-  "version": "0.0.2",
+  "name": "@pathscale/rollup-plugin-vue3-ui-css-purge",
+  "version": "0.0.1",
   "description": "Automatically remove unused CSS when using vue3-ui",
   "keywords": [
     "rollup",
@@ -10,13 +10,13 @@
     "ui",
     "vue3-ui"
   ],
-  "homepage": "https://github.com/pathscale/rollup-vue3-ui-css-purge#readme",
+  "homepage": "https://github.com/pathscale/rollup-plugin-vue3-ui-css-purge#readme",
   "bugs": {
-    "url": "https://github.com/pathscale/rollup-vue3-ui-css-purge/issues"
+    "url": "https://github.com/pathscale/rollup-plugin-vue3-ui-css-purge/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/pathscale/rollup-vue3-ui-css-purge.git"
+    "url": "git+https://github.com/pathscale/rollup-plugin-vue3-ui-css-purge.git"
   },
   "license": "MIT",
   "author": "Anton Kudryavtsev <boblobl4@gmail.com>",
