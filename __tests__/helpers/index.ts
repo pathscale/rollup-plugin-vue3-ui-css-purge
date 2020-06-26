@@ -2,12 +2,10 @@
 import path from "path";
 import fs from "fs-extra";
 import { rollup, InputOptions, OutputOptions } from "rollup";
-import dotenv from "dotenv";
 
 import vue3ui from "../../src";
 import { Options } from "../../src/types";
 
-import replace from "@rollup/plugin-replace";
 import commonjs from "@rollup/plugin-commonjs";
 import json from "@rollup/plugin-json";
 import resolve from "@rollup/plugin-node-resolve";
@@ -47,16 +45,11 @@ export const fixture = (...args: string[]): string =>
 export async function write(data: WriteData): Promise<WriteResult> {
   const outDir = fixture("dist", data.outDir ?? data.title ?? "");
   const input = Array.isArray(data.input) ? data.input.map(i => fixture(i)) : fixture(data.input);
-  const env = dotenv.config({ path: path.join(process.cwd(), ".env") });
   const bundle = await rollup({
     ...data.inputOpts,
     input,
     plugins: [
       json(),
-      replace({
-        // eslint-disable-next-line @typescript-eslint/naming-convention
-        "process.env.VUE_APP_VERSION_NUMBER": JSON.stringify(env.parsed?.VUE_APP_VERSION_NUMBER),
-      }),
       resolve({ preferBuiltins: true }),
       commonjs(),
       vue3ui(data.options),

@@ -1,14 +1,8 @@
 /** `@pathscale/rollup-plugin-vue3-ui-css-purge`'s full option list */
 export interface Options {
-  /**
-   * Files to include for processing
-   * @default /\.vue$/
-   */
+  /** Files to include for processing */
   include?: ReadonlyArray<string | RegExp> | string | RegExp | null;
-  /**
-   * Files to exclude from processing
-   * @default ["**\\node_modules\\**"]
-   */
+  /** Files to exclude from processing */
   exclude?: ReadonlyArray<string | RegExp> | string | RegExp | null;
 }
 

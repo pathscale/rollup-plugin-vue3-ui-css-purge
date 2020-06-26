@@ -11,6 +11,10 @@ export default function (): Plugin {
 
   const parser = new htmlparser2.Parser(
     {
+      onopentagname(name) {
+        whitelist.add(name);
+      },
+
       onattribute(name, data) {
         if (name === "class") {
           for (const c of data.split(" ")) whitelist.add(c);

@@ -6,8 +6,11 @@ export const context = {
   newType: undefined,
   closeType: undefined,
   passiveType: undefined,
+  customClass: undefined,
   navClasses: undefined,
   spanClasses: undefined,
+  rootClasses: undefined,
+  inputClasses: undefined,
 };
 
 export const truthy = {
@@ -17,11 +20,13 @@ export const truthy = {
   ellipsis: true,
   disabled: true,
   rounded: true,
+  computedRounded: true,
   loading: true,
   outlined: true,
   expanded: true,
   inverted: true,
   focused: true,
+  isFocused: true,
   active: true,
   hovered: true,
   selected: true,

@@ -4,7 +4,6 @@ import { simple as walk } from "acorn-walk";
 import { parseQuery } from "./utils";
 import { Options } from "./types";
 import * as htmlparser2 from "htmlparser2";
-import { context } from "../helper/data";
 
 const testing = process.env.NODE_ENV === "test";
 
@@ -18,27 +17,43 @@ const mappings = testing
 const decamelize = (s: string): string =>
   s.replace(/^(.)/, str => str.toLowerCase()).replace(/([A-Z])/g, str => `-${str.toLowerCase()}`);
 
+const camelize = (s: string): string =>
+  s
+    .replace(/^(.)/, str => str.toUpperCase())
+    .replace(/-([a-z])/g, str => str.toUpperCase().slice(1));
+
 const analyzer = (options: Options): Plugin => {
   const isIncluded = createFilter(
     options.include ?? /\.vue$/,
     options.exclude ?? ["**/node_modules/**"],
   );
 
-  const whitelist = new Set<string>();
+  const whitelist = new Set<string>(["*", "html", "head", "body", "div", "app"]);
   let currentTag = "";
 
   const parser = new htmlparser2.Parser(
     {
       onopentagname(name) {
+        whitelist.add(name);
         currentTag = name;
       },
 
-      onattribute(name, data) {
-        if (!mappings[currentTag.slice(1)]) return;
-        for (const from of Object.keys(context)) {
-          if (name !== from && name !== decamelize(from)) continue;
-          for (const cl of data.split(" ")) whitelist.add(cl);
-        }
+      onattribute(_, data) {
+        for (const cl of data.split(" ")) whitelist.add(cl);
+
+        const m = [
+          // TODO: Proper selector
+          ...(mappings[currentTag] ?? []),
+          ...(mappings[currentTag.slice(1)] ?? []),
+          ...(mappings[currentTag.toLowerCase()] ?? []),
+          ...(mappings[currentTag.slice(1).toLowerCase()] ?? []),
+          ...(mappings[decamelize(currentTag)] ?? []),
+          ...(mappings[decamelize(currentTag).slice(1)] ?? []),
+          ...(mappings[camelize(currentTag)] ?? []),
+          ...(mappings[camelize(currentTag).slice(1)] ?? []),
+        ];
+
+        for (const cl of m) whitelist.add(cl);
       },
     },
     { decodeEntities: true, lowerCaseTags: false, lowerCaseAttributeNames: true },
@@ -67,9 +82,7 @@ const analyzer = (options: Options): Plugin => {
           const value = (node as ImportNode).source.value;
           if (!value.startsWith("@pathscale/vue3-ui")) return;
           for (const spec of (node as ImportNode).specifiers) {
-            // TODO: Do it properly
             const wl = mappings[spec.imported.name.slice(1)];
-            // console.log(spec.imported.name, wl);
             if (wl) for (const i of wl) whitelist.add(i);
           }
         },

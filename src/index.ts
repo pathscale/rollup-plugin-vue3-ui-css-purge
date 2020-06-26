@@ -5,10 +5,6 @@ import purgecss from "@fullhuman/postcss-purgecss";
 import { Options } from "./types";
 import analyzeCode from "./analyzer";
 
-// import path from "path";
-// import { inspect } from "util";
-// const debug = (...data: unknown[]) => console.log(inspect(data, false, null));
-
 // TODO: Split into internal and extenal plugins
 const generator = (options: Options = {}): Plugin => {
   const isVue3UICSS = createFilter([
@@ -17,7 +13,7 @@ const generator = (options: Options = {}): Plugin => {
     "**/node_modules/@pathscale/bulma-pull-2981-css-var-only/**/*.css",
   ]);
 
-  const whitelist: string[] = [];
+  const whitelistPatterns: RegExp[] = [];
   const name = "vue3-ui-css-purge";
   const plugin: Plugin = {
     name,
@@ -29,22 +25,39 @@ const generator = (options: Options = {}): Plugin => {
 
       const newInputOpts = {
         ...inputOpts,
-        plugins: inputOpts.plugins.filter(p => p.name !== name),
+        // TODO: Proper plugins list
+        plugins: inputOpts.plugins.filter(p => p.name !== name && p.name !== "closure-compiler"),
       };
 
       const analyzed = await analyzeCode(options, newInputOpts);
-      whitelist.push(...analyzed);
+      const escaped = analyzed.map(a =>
+        // TODO: Proper regex escaping
+        a
+          .replace(".", "\\.")
+          .replace("?", "\\?")
+          .replace("+", "\\+")
+          .replace("*", "\\*")
+          .replace("^", "\\^")
+          .replace("$", "\\$"),
+      );
+
+      whitelistPatterns.push(...escaped.map(e => new RegExp(`^${e}$`)));
+      whitelistPatterns.push(...escaped.map(e => new RegExp(`${e}\\[.+?\\]`)));
+      console.log(whitelistPatterns);
     },
 
     async transform(code, id) {
       if (!isVue3UICSS(id)) return null;
 
-      // debug(path.parse(id).name, whitelist);
-      const purger = postcss(purgecss({ content: [], whitelist }));
-      const { css } = await purger.process(code, { from: id });
+      const purger = postcss(
+        purgecss({
+          content: [],
+          whitelistPatterns,
+          whitelistPatternsChildren: whitelistPatterns,
+        }),
+      );
 
-      // eslint-disable-next-line node/no-unsupported-features/node-builtins
-      // debug(id, new TextEncoder().encode(code).length, new TextEncoder().encode(css).length);
+      const { css } = await purger.process(code, { from: id });
 
       return { code: css };
     },
