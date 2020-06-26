@@ -43,7 +43,6 @@ const generator = (options: Options = {}): Plugin => {
 
       whitelistPatterns.push(...escaped.map(e => new RegExp(`^${e}$`)));
       whitelistPatterns.push(...escaped.map(e => new RegExp(`${e}\\[.+?\\]`)));
-      console.log(whitelistPatterns);
     },
 
     async transform(code, id) {
