@@ -106,14 +106,6 @@
     "span",
     "v-tooltip"
   ],
-  "Columns": [
-    "column",
-    "columns",
-    "container",
-    "div",
-    "is-centered",
-    "slot"
-  ],
   "Login": [
     "Button",
     "Field",
@@ -258,6 +250,16 @@
     "v-checkbox"
   ],
   "Collapse": [],
+  "Column": [
+    "column",
+    "div",
+    "slot"
+  ],
+  "Columns": [
+    "columns",
+    "div",
+    "slot"
+  ],
   "Container": [
     "container",
     "div",

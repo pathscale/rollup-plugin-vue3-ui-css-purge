@@ -13,6 +13,7 @@ export const context = {
   spanClasses: undefined,
   rootClasses: undefined,
   inputClasses: undefined,
+  computedClasses: undefined,
 };
 
 export const truthy = {
