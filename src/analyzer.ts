@@ -72,14 +72,21 @@ export function analyze(input: string | string[] | Record<string, string>): stri
     if (template?.content) parser.parseComplete(template.content);
 
     if (script?.content) {
-      console.log(script.content);
       const ast = jsparser.parse(script.content, { sourceType: "unambiguous" });
       traverse(ast, {
         // eslint-disable-next-line @typescript-eslint/naming-convention
         ImportDeclaration({ node }) {
-          // TODO: Move duplicate code into a function
           const { value } = node.source;
-          const depId = resolveSync(value, { basedir: path.dirname(id), extensions });
+          const depId = resolveSync(value, {
+            basedir: path.dirname(id),
+            extensions,
+            packageFilter(pkg) {
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-member-access
+              if (pkg.module) pkg.main = pkg.module;
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+              return pkg;
+            },
+          });
           if (traversed.has(depId) || !isSupported(depId)) return;
           traversed.add(depId);
           idList.push(depId);
@@ -113,15 +120,18 @@ export function analyze(input: string | string[] | Record<string, string>): stri
 
     traverse(ast, {
       // eslint-disable-next-line @typescript-eslint/naming-convention
-      ExportDeclaration({ node }) {
-        console.log(node);
-      },
-
-      // eslint-disable-next-line @typescript-eslint/naming-convention
       ImportDeclaration({ node }) {
-        // TODO: Move duplicate code into a function
         const { value } = node.source;
-        const depId = resolveSync(value, { basedir: path.dirname(id), extensions });
+        const depId = resolveSync(value, {
+          basedir: path.dirname(id),
+          extensions,
+          packageFilter(pkg) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-member-access
+            if (pkg.module) pkg.main = pkg.module;
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+            return pkg;
+          },
+        });
         if (traversed.has(depId) || !isSupported(depId)) return;
         traversed.add(depId);
         idList.push(depId);
