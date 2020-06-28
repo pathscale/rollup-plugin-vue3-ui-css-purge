@@ -8,6 +8,29 @@
   "NavLayout": [
     "h1"
   ],
+  "Menu": [
+    "div",
+    "menu",
+    "slot"
+  ],
+  "MenuItem": [
+    "component",
+    "is-active",
+    "is-disabled",
+    "li",
+    "slot",
+    "span",
+    "template",
+    "transition",
+    "ul"
+  ],
+  "MenuList": [
+    "menu-label",
+    "menu-list",
+    "p",
+    "slot",
+    "ul"
+  ],
   "Modal": [
     "button",
     "close",

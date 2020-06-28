@@ -52,7 +52,7 @@ export async function write(data: WriteData): Promise<WriteResult> {
       json(),
       resolve({ preferBuiltins: true }),
       commonjs(),
-      vue3ui(data.options),
+      vue3ui(),
       vue(),
       styles({ mode: "extract" }),
     ],

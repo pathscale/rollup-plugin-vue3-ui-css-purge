@@ -1,37 +1,38 @@
+import path from "path";
+import fs from "fs-extra";
+import { sync as resolveSync } from "resolve";
+import * as jsparser from "@babel/parser";
+import traverse from "@babel/traverse";
+import * as htmlparser from "htmlparser2";
+import { kebablize, pascalize, camelize } from "./utils";
 import { createFilter } from "@rollup/pluginutils";
-import { Plugin, rollup, NormalizedInputOptions, OutputAsset } from "rollup";
-import { simple as walk } from "acorn-walk";
-import { parseQuery } from "./utils";
-import { Options } from "./types";
-import * as htmlparser2 from "htmlparser2";
+import { parseSFC } from "./analyzer-utils";
 
 const testing = process.env.NODE_ENV === "test";
 
-// TODO: Mappings should probably be managed inside vue3-ui to not require plugin re-release on every change
+// TODO: Mappings should be managed inside vue3-ui to not require plugin re-release on every change
 const mappings = testing
   ? // eslint-disable-next-line @typescript-eslint/no-var-requires
     (require("../helper/mappings.json") as Record<string, string[]>)
   : // eslint-disable-next-line @typescript-eslint/no-var-requires
     (require("./mappings.json") as Record<string, string[]>);
 
-const decamelize = (s: string): string =>
-  s.replace(/^(.)/, str => str.toLowerCase()).replace(/([A-Z])/g, str => `-${str.toLowerCase()}`);
-
-const camelize = (s: string): string =>
-  s
-    .replace(/^(.)/, str => str.toUpperCase())
-    .replace(/-([a-z])/g, str => str.toUpperCase().slice(1));
-
-const analyzer = (options: Options): Plugin => {
-  const isIncluded = createFilter(
-    options.include ?? /\.vue$/,
-    options.exclude ?? ["**/node_modules/**"],
-  );
+export function analyze(input: string | string[] | Record<string, string>): string[] {
+  const extensions = [".ts", ".tsx", ".mjs", ".js", ".jsx", ".vue", ".json"];
+  const isSupported = createFilter(extensions.map(ext => `**/*${ext}`));
 
   const whitelist = new Set<string>(["*", "html", "head", "body", "div", "app"]);
   let currentTag = "";
 
-  const parser = new htmlparser2.Parser(
+  const traversed = new Set<string>();
+  const idList = (Array.isArray(input)
+    ? input
+    : typeof input === "object"
+    ? Object.values(input)
+    : [input]
+  ).map(id => path.resolve(id));
+
+  const parser = new htmlparser.Parser(
     {
       onopentagname(name) {
         whitelist.add(name);
@@ -45,12 +46,15 @@ const analyzer = (options: Options): Plugin => {
           // TODO: Proper selector
           ...(mappings[currentTag] ?? []),
           ...(mappings[currentTag.slice(1)] ?? []),
-          ...(mappings[currentTag.toLowerCase()] ?? []),
-          ...(mappings[currentTag.slice(1).toLowerCase()] ?? []),
-          ...(mappings[decamelize(currentTag)] ?? []),
-          ...(mappings[decamelize(currentTag).slice(1)] ?? []),
+
+          ...(mappings[kebablize(currentTag)] ?? []),
+          ...(mappings[kebablize(currentTag).slice(1)] ?? []),
+
           ...(mappings[camelize(currentTag)] ?? []),
           ...(mappings[camelize(currentTag).slice(1)] ?? []),
+
+          ...(mappings[pascalize(currentTag)] ?? []),
+          ...(mappings[pascalize(currentTag).slice(1)] ?? []),
         ];
 
         for (const cl of m) whitelist.add(cl);
@@ -59,58 +63,71 @@ const analyzer = (options: Options): Plugin => {
     { decodeEntities: true, lowerCaseTags: false, lowerCaseAttributeNames: true },
   );
 
-  const name = "vue3-ui-css-whitelist-analyzer";
-  const plugin: Plugin = {
-    name,
+  function extract(code: string, id: string): void {
+    if (!/\.vue$/.test(id)) return;
+    console.log(id);
 
-    transform(code, id) {
-      const query = parseQuery(id);
-      if (!query.vue) return null;
-      if (!query.src && !isIncluded(query.filename)) return null;
-      if (query.type === "template") parser.parseComplete(code);
-      if (query.type !== "script") return null;
+    const { template, script } = parseSFC(code, id);
 
-      type ImportNode = acorn.Node & {
-        specifiers: { imported: { name: string } }[];
-        source: { value: string };
-      };
+    if (template?.content) parser.parseComplete(template.content);
 
-      const ast = this.parse(code, {});
-      walk(ast, {
+    if (script?.content) {
+      console.log(script.content);
+      const ast = jsparser.parse(script.content, { sourceType: "unambiguous" });
+      traverse(ast, {
         // eslint-disable-next-line @typescript-eslint/naming-convention
-        ImportDeclaration(node) {
-          const value = (node as ImportNode).source.value;
+        ImportDeclaration({ node }) {
+          // TODO: Move duplicate code into a function
+          const { value } = node.source;
+          const depId = resolveSync(value, { basedir: path.dirname(id), extensions });
+          if (traversed.has(depId) || !isSupported(depId)) return;
+          traversed.add(depId);
+          idList.push(depId);
+
           if (!value.startsWith("@pathscale/vue3-ui")) return;
-          for (const spec of (node as ImportNode).specifiers) {
-            const wl = mappings[spec.imported.name.slice(1)];
-            if (wl) for (const i of wl) whitelist.add(i);
+
+          for (const spec of node.specifiers) {
+            if (spec.type === "ImportSpecifier") {
+              const wl = mappings[spec.imported.name.slice(1)];
+              if (wl) for (const i of wl) whitelist.add(i);
+            }
           }
         },
       });
+    }
+  }
 
-      return null;
-    },
+  while (idList.length > 0) {
+    const id = idList.pop();
+    if (!id) continue;
 
-    generateBundle() {
-      const source = JSON.stringify([...whitelist].sort());
-      this.emitFile({ type: "asset", fileName: "whitelist", source });
-    },
-  };
+    const code = fs.readFileSync(id, "utf8");
+    extract(code, id);
 
-  return plugin;
-};
+    let ast: ReturnType<typeof jsparser.parse> | undefined;
+    try {
+      ast = jsparser.parse(code, { sourceType: "unambiguous" });
+    } catch {
+      continue;
+    }
 
-export default async function (
-  options: Options,
-  inputOpts: NormalizedInputOptions,
-): Promise<string[]> {
-  const vueIndex = inputOpts.plugins.findIndex(p => p.name === "vue");
-  inputOpts.plugins.splice(vueIndex - 1, 0, analyzer(options));
+    traverse(ast, {
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      ExportDeclaration({ node }) {
+        console.log(node);
+      },
 
-  const bundle = await rollup(inputOpts);
-  const { output } = await bundle.generate({});
-  const whitelistFile = output.find(f => f.fileName === "whitelist") as OutputAsset;
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      ImportDeclaration({ node }) {
+        // TODO: Move duplicate code into a function
+        const { value } = node.source;
+        const depId = resolveSync(value, { basedir: path.dirname(id), extensions });
+        if (traversed.has(depId) || !isSupported(depId)) return;
+        traversed.add(depId);
+        idList.push(depId);
+      },
+    });
+  }
 
-  const whitelist = JSON.parse(Buffer.from(whitelistFile.source).toString("utf8")) as string[];
-  return whitelist;
+  return [...whitelist].sort();
 }

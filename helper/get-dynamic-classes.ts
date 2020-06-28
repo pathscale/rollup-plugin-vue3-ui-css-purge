@@ -5,6 +5,8 @@ export default function (raw: string): string[] {
   const data = `[${raw}]`;
   const classes: string[] = [];
 
+  // console.log(data);
+
   const res = [
     ...(vm.runInNewContext(data, { ...context, ...truthy }) as []),
     ...(vm.runInNewContext(data, { ...context, ...falsy }) as []),

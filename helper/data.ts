@@ -1,4 +1,6 @@
-// TODO: Figure out the allowed values for classes
+// TODO: Figure out how to keep variables up-to-date
+// TODO: Migrate helper to vue3-ui
+
 export const context = {
   position: undefined,
   size: undefined,
@@ -32,6 +34,8 @@ export const truthy = {
   selected: true,
   square: true,
   newAnimated: true,
+  newActive: true,
+  newExpanded: true,
   always: true,
   multilined: true,
   dashed: true,

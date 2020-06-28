@@ -1,4 +1,4 @@
-import qs from "querystring";
+import qs from "query-string";
 import { Query } from "./types";
 
 export function parseQuery(id: string): Query {
@@ -17,3 +17,16 @@ export function parseQuery(id: string): Query {
     scoped: "scoped" in raw,
   } as Query;
 }
+
+export const kebablize = (s: string): string =>
+  s.replace(/^(.)/, str => str.toLowerCase()).replace(/([A-Z])/g, str => `-${str.toLowerCase()}`);
+
+export const camelize = (s: string): string =>
+  s
+    .replace(/^(.)/, str => str.toLowerCase())
+    .replace(/-([a-z])/g, str => str.toUpperCase().slice(1));
+
+export const pascalize = (s: string): string =>
+  s
+    .replace(/^(.)/, str => str.toUpperCase())
+    .replace(/-([a-z])/g, str => str.toUpperCase().slice(1));
