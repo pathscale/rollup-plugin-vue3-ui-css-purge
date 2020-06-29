@@ -6,7 +6,7 @@ import { analyze } from "./analyzer";
 import { Options } from "./types";
 
 // TODO: Split into internal and extenal plugins
-const generator = (options: Options): Plugin => {
+const generator = (options: Options = {}): Plugin => {
   const isVue3UICSS = createFilter([
     "**/node_modules/@pathscale/vue3-ui/**/*.css",
     "**/node_modules/@pathscale/bulma-css-var-only/**/*.css",
