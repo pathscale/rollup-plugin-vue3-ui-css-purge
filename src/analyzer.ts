@@ -19,7 +19,10 @@ const mappings = testing
 
 export function analyze(input: string | string[] | Record<string, string>): string[] {
   const extensions = [".ts", ".tsx", ".mjs", ".js", ".jsx", ".vue", ".json"];
-  const isSupported = createFilter(extensions.map(ext => `**/*${ext}`));
+  const isSupported = createFilter(
+    extensions.map(ext => `**/*${ext}`),
+    ["**/node_modules/**"],
+  );
 
   const whitelist = new Set<string>(["*", "html", "head", "body", "div", "app"]);
   let currentTag = "";
@@ -64,8 +67,8 @@ export function analyze(input: string | string[] | Record<string, string>): stri
   );
 
   function extract(code: string, id: string): void {
+    console.log(`ANALYZER - TRAVERSAL (${id})`);
     if (!/\.vue$/.test(id)) return;
-    console.log(id);
 
     const { template, script } = parseSFC(code, id);
 
@@ -74,6 +77,25 @@ export function analyze(input: string | string[] | Record<string, string>): stri
     if (script?.content) {
       const ast = jsparser.parse(script.content, { sourceType: "unambiguous" });
       traverse(ast, {
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        ExportNamedDeclaration({ node }) {
+          const { value } = node.source ?? {};
+          if (!value) return;
+          const depId = resolveSync(value, {
+            basedir: path.dirname(id),
+            extensions,
+            packageFilter(pkg) {
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-member-access
+              if (pkg.module) pkg.main = pkg.module;
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+              return pkg;
+            },
+          });
+          if (traversed.has(depId) || !isSupported(depId)) return;
+          traversed.add(depId);
+          idList.push(depId);
+        },
+
         // eslint-disable-next-line @typescript-eslint/naming-convention
         ImportDeclaration({ node }) {
           const { value } = node.source;
@@ -91,11 +113,13 @@ export function analyze(input: string | string[] | Record<string, string>): stri
           traversed.add(depId);
           idList.push(depId);
 
-          if (!value.startsWith("@pathscale/vue3-ui")) return;
+          if (!depId.includes("@pathscale/vue3-ui")) return;
 
           for (const spec of node.specifiers) {
             if (spec.type === "ImportSpecifier") {
-              const wl = mappings[spec.imported.name.slice(1)];
+              const name = spec.imported.name.slice(1);
+              const wl = mappings[name];
+              if (wl) console.log(`ANALYZER - VUE3-UI COMPONENT (${name})`);
               if (wl) for (const i of wl) whitelist.add(i);
             }
           }
@@ -119,6 +143,25 @@ export function analyze(input: string | string[] | Record<string, string>): stri
     }
 
     traverse(ast, {
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      ExportNamedDeclaration({ node }) {
+        const { value } = node.source ?? {};
+        if (!value) return;
+        const depId = resolveSync(value, {
+          basedir: path.dirname(id),
+          extensions,
+          packageFilter(pkg) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-member-access
+            if (pkg.module) pkg.main = pkg.module;
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+            return pkg;
+          },
+        });
+        if (traversed.has(depId) || !isSupported(depId)) return;
+        traversed.add(depId);
+        idList.push(depId);
+      },
+
       // eslint-disable-next-line @typescript-eslint/naming-convention
       ImportDeclaration({ node }) {
         const { value } = node.source;

@@ -55,7 +55,7 @@ devDependencies:
   rollup-plugin-vue: 6.0.0-beta.6_@vue+compiler-sfc@3.0.0-beta.15
   shx: 0.3.2
   ts-jest: 26.1.1_jest@26.1.0+typescript@3.9.5
-  typedoc: 0.17.7_typescript@3.9.5
+  typedoc: 0.17.8_typescript@3.9.5
   typescript: 3.9.5
   vue: 3.0.0-beta.15
 lockfileVersion: 5.1
@@ -8866,15 +8866,15 @@ packages:
     dev: true
     resolution:
       integrity: sha512-zdu8XMNEDepKKR+XYOXAVPtWui0ly0NtohUscw+UmaHiAWT8hrV1rr//H6V+0DvJ3OQ19S979M0laLfX8rm82Q==
-  /typedoc-default-themes/0.10.1:
+  /typedoc-default-themes/0.10.2:
     dependencies:
       lunr: 2.3.8
     dev: true
     engines:
       node: '>= 8'
     resolution:
-      integrity: sha512-SuqAQI0CkwhqSJ2kaVTgl37cWs733uy9UGUqwtcds8pkFK8oRF4rZmCq+FXTGIb9hIUOu40rf5Kojg0Ha6akeg==
-  /typedoc/0.17.7_typescript@3.9.5:
+      integrity: sha512-zo09yRj+xwLFE3hyhJeVHWRSPuKEIAsFK5r2u47KL/HBKqpwdUSanoaz5L34IKiSATFrjG5ywmIu98hPVMfxZg==
+  /typedoc/0.17.8_typescript@3.9.5:
     dependencies:
       fs-extra: 8.1.0
       handlebars: 4.7.6
@@ -8885,7 +8885,7 @@ packages:
       minimatch: 3.0.4
       progress: 2.0.3
       shelljs: 0.8.4
-      typedoc-default-themes: 0.10.1
+      typedoc-default-themes: 0.10.2
       typescript: 3.9.5
     dev: true
     engines:
@@ -8894,7 +8894,7 @@ packages:
     peerDependencies:
       typescript: '>=3.8.3'
     resolution:
-      integrity: sha512-PEnzjwQAGjb0O8a6VDE0lxyLAadqNujN5LltsTUhZETolRMiIJv6Ox+Toa8h0XhKHqAOh8MOmB0eBVcWz6nuAw==
+      integrity: sha512-/OyrHCJ8jtzu+QZ+771YaxQ9s4g5Z3XsQE3Ma7q+BL392xxBn4UMvvCdVnqKC2T/dz03/VXSLVKOP3lHmDdc/w==
   /typescript/3.9.5:
     dev: true
     engines:
@@ -9365,6 +9365,6 @@ specifiers:
   shx: ^0.3.2
   ts-jest: ^26.1.1
   tslib: ^2.0.0
-  typedoc: ^0.17.7
+  typedoc: ^0.17.8
   typescript: ^3.9.5
   vue: ^3.0.0-beta.15
