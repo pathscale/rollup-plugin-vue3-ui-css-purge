@@ -3,9 +3,10 @@ import { Plugin } from "rollup";
 import postcss from "postcss";
 import purgecss from "@fullhuman/postcss-purgecss";
 import { analyze } from "./analyzer";
+import { Options } from "./types";
 
 // TODO: Split into internal and extenal plugins
-const generator = (): Plugin => {
+const generator = (options: Options): Plugin => {
   const isVue3UICSS = createFilter([
     "**/node_modules/@pathscale/vue3-ui/**/*.css",
     "**/node_modules/@pathscale/bulma-css-var-only/**/*.css",
@@ -19,16 +20,22 @@ const generator = (): Plugin => {
     name: "vue3-ui-css-purge",
 
     buildStart(inputOpts) {
-      const base = ["*", "html", "head", "body", "app", "div", ...analyze(inputOpts.input)].map(b =>
-        b.replace(/[$()*+.?[\\\]^{|}-]/g, "\\$&"),
-      );
+      const base = [
+        "*",
+        "html",
+        "head",
+        "body",
+        "app",
+        "div",
+        ...analyze(inputOpts.input, options.debug),
+      ].map(b => b.replace(/[$()*+.?[\\\]^{|}-]/g, "\\$&"));
 
       for (const b of base) {
         whitelist.add(new RegExp(`^${b}$`));
         whitelist.add(new RegExp(`${b}\\[.+?\\]`));
       }
 
-      console.log(`CSS PURGER - WHITELIST (${whitelist.size} entries)`);
+      options.debug && console.log(`CSS PURGER - WHITELIST (${whitelist.size} entries)`);
     },
 
     async transform(code, id) {

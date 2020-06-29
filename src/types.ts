@@ -4,6 +4,8 @@ export interface Options {
   include?: ReadonlyArray<string | RegExp> | string | RegExp | null;
   /** Files to exclude from processing */
   exclude?: ReadonlyArray<string | RegExp> | string | RegExp | null;
+  /** Enable debug output */
+  debug?: boolean;
 }
 
 /** Parsed Vue SFC query */

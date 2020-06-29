@@ -17,7 +17,10 @@ const mappings = testing
   : // eslint-disable-next-line @typescript-eslint/no-var-requires
     (require("./mappings.json") as Record<string, string[]>);
 
-export function analyze(input: string | string[] | Record<string, string>): string[] {
+export function analyze(
+  input: string | string[] | Record<string, string>,
+  debug?: boolean,
+): string[] {
   const extensions = [".ts", ".tsx", ".mjs", ".js", ".jsx", ".vue", ".json"];
   const isSupported = createFilter(
     extensions.map(ext => `**/*${ext}`),
@@ -67,10 +70,10 @@ export function analyze(input: string | string[] | Record<string, string>): stri
   );
 
   function extract(code: string, id: string): void {
-    console.log(`ANALYZER - TRAVERSAL (${humanlizePath(id)})`);
+    debug && console.log(`ANALYZER - TRAVERSAL (${humanlizePath(id)})`);
 
     if (!/\.vue$/.test(id)) return;
-    console.log(`ANALYZER - INCLUDED (${humanlizePath(id)})`);
+    debug && console.log(`ANALYZER - INCLUDED (${humanlizePath(id)})`);
 
     const { template, script } = parseSFC(code, id);
 
@@ -121,7 +124,7 @@ export function analyze(input: string | string[] | Record<string, string>): stri
             if (spec.type === "ImportSpecifier") {
               const name = spec.imported.name.slice(1);
               const wl = mappings[name];
-              if (wl) console.log(`ANALYZER - VUE3-UI COMPONENT (${name})`);
+              if (wl && debug) console.log(`ANALYZER - VUE3-UI COMPONENT (${name})`);
               if (wl) for (const i of wl) whitelist.add(i);
             }
           }
