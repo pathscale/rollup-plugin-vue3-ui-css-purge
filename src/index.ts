@@ -28,7 +28,7 @@ const generator = (): Plugin => {
         whitelist.add(new RegExp(`${b}\\[.+?\\]`));
       }
 
-      console.log(`ANALYZER - WHITELIST (${whitelist.size} entries)`);
+      console.log(`CSS PURGER - WHITELIST (${whitelist.size} entries)`);
     },
 
     async transform(code, id) {

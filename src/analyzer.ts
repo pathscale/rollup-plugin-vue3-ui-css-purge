@@ -4,7 +4,7 @@ import { sync as resolveSync } from "resolve";
 import * as jsparser from "@babel/parser";
 import traverse from "@babel/traverse";
 import * as htmlparser from "htmlparser2";
-import { kebablize, pascalize, camelize } from "./utils";
+import { kebablize, pascalize, camelize, humanlizePath } from "./utils";
 import { createFilter } from "@rollup/pluginutils";
 import { parseSFC } from "./analyzer-utils";
 
@@ -67,8 +67,10 @@ export function analyze(input: string | string[] | Record<string, string>): stri
   );
 
   function extract(code: string, id: string): void {
-    console.log(`ANALYZER - TRAVERSAL (${id})`);
+    console.log(`ANALYZER - TRAVERSAL (${humanlizePath(id)})`);
+
     if (!/\.vue$/.test(id)) return;
+    console.log(`ANALYZER - INCLUDED (${humanlizePath(id)})`);
 
     const { template, script } = parseSFC(code, id);
 
@@ -79,8 +81,8 @@ export function analyze(input: string | string[] | Record<string, string>): stri
       traverse(ast, {
         // eslint-disable-next-line @typescript-eslint/naming-convention
         ExportNamedDeclaration({ node }) {
-          const { value } = node.source ?? {};
-          if (!value) return;
+          if (!node.source?.value) return;
+          const { value } = node.source;
           const depId = resolveSync(value, {
             basedir: path.dirname(id),
             extensions,
@@ -145,8 +147,8 @@ export function analyze(input: string | string[] | Record<string, string>): stri
     traverse(ast, {
       // eslint-disable-next-line @typescript-eslint/naming-convention
       ExportNamedDeclaration({ node }) {
-        const { value } = node.source ?? {};
-        if (!value) return;
+        if (!node.source?.value) return;
+        const { value } = node.source;
         const depId = resolveSync(value, {
           basedir: path.dirname(id),
           extensions,

@@ -1,3 +1,4 @@
+import path from "path";
 import qs from "query-string";
 import { Query } from "./types";
 
@@ -17,6 +18,8 @@ export function parseQuery(id: string): Query {
     scoped: "scoped" in raw,
   } as Query;
 }
+
+export const humanlizePath = (filepath: string): string => path.relative(process.cwd(), filepath);
 
 export const kebablize = (s: string): string =>
   s.replace(/^(.)/, str => str.toLowerCase()).replace(/([A-Z])/g, str => `-${str.toLowerCase()}`);

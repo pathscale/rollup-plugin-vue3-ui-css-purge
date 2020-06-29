@@ -1,6 +1,6 @@
 {
   "name": "@pathscale/rollup-plugin-vue3-ui-css-purge",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Automatically remove unused CSS when using vue3-ui",
   "keywords": [
     "rollup",
