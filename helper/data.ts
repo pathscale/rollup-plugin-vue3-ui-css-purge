@@ -14,6 +14,8 @@ export const context = {
   rootClasses: undefined,
   inputClasses: undefined,
   computedClasses: undefined,
+  anchorClasses: undefined,
+  itemClasses: undefined,
 };
 
 export const truthy = {

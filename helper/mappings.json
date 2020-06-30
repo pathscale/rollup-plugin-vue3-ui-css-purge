@@ -8,6 +8,23 @@
   "NavLayout": [
     "h1"
   ],
+  "Dropdown": [
+    "div",
+    "dropdown",
+    "dropdown-content",
+    "dropdown-menu",
+    "dropdown-trigger",
+    "slot",
+    "transition"
+  ],
+  "DropdownItem": [
+    "a",
+    "div",
+    "dropdown-divider",
+    "dropdown-item",
+    "hr",
+    "slot"
+  ],
   "Menu": [
     "div",
     "menu",
