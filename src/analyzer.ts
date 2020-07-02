@@ -8,14 +8,8 @@ import { kebablize, pascalize, camelize, humanlizePath } from "./utils";
 import { createFilter } from "@rollup/pluginutils";
 import { parseSFC } from "./analyzer-utils";
 
-const testing = process.env.NODE_ENV === "test";
-
-// TODO: Mappings should be managed inside vue3-ui to not require plugin re-release on every change
-const mappings = testing
-  ? // eslint-disable-next-line @typescript-eslint/no-var-requires
-    (require("../helper/mappings.json") as Record<string, string[]>)
-  : // eslint-disable-next-line @typescript-eslint/no-var-requires
-    (require("./mappings.json") as Record<string, string[]>);
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const mappings = require("../vue3-ui/mappings.json") as Record<string, string[]>;
 
 export function analyze(
   input: string | string[] | Record<string, string>,
