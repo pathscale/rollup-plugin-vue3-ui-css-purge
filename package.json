@@ -29,7 +29,6 @@
   "scripts": {
     "prebuild": "shx rm -rf dist",
     "build": "rollup -c --environment NODE_ENV:production",
-    "postbuild": "shx cp helper/mappings.json dist",
     "commit": "commit",
     "prelint": "prettier -l --write .",
     "lint": "eslint --ext .ts,.js --fix .",
