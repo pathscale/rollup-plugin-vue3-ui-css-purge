@@ -8,8 +8,19 @@ import { kebablize, pascalize, camelize, humanlizePath } from "./utils";
 import { createFilter } from "@rollup/pluginutils";
 import { parseSFC } from "./analyzer-utils";
 
+const vue3ui = resolveSync("@pathscale/vue3-ui", {
+  basedir: __dirname,
+  packageFilter(pkg) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-member-access
+    if (pkg.module) pkg.main = pkg.module;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    return pkg;
+  },
+});
+
+const mappingsFile = path.join(path.dirname(vue3ui), "mappings.json");
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const mappings = require("../vue3-ui/mappings.json") as Record<string, string[]>;
+const mappings = require(mappingsFile) as Record<string, string[]>;
 
 export function analyze(
   input: string | string[] | Record<string, string>,
