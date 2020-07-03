@@ -4,8 +4,8 @@ import postcss from "postcss";
 import purgecss from "@fullhuman/postcss-purgecss";
 import { analyze } from "./analyzer";
 import { Options } from "./types";
+import { inspect } from "util";
 
-// TODO: Split into internal and extenal plugins
 const generator = (options: Options = {}): Plugin => {
   const isVue3UICSS = createFilter([
     "**/node_modules/@pathscale/vue3-ui/**/*.css",
@@ -35,7 +35,11 @@ const generator = (options: Options = {}): Plugin => {
         whitelist.add(new RegExp(`${b}\\[.+?\\]`));
       }
 
-      options.debug && console.log(`CSS PURGER - WHITELIST (${whitelist.size} entries)`);
+      options.debug &&
+        console.log(
+          `CSS PURGER - WHITELIST (${whitelist.size} entries):\n`,
+          inspect([...whitelist], { showHidden: false, depth: null, maxArrayLength: null }),
+        );
     },
 
     async transform(code, id) {

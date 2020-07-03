@@ -18,7 +18,7 @@ devDependencies:
   '@commitlint/config-angular': 9.0.1
   '@commitlint/prompt-cli': 9.0.1
   '@pathscale/bulma-pull-2981-css-var-only': 0.9.1
-  '@pathscale/vue3-ui': 0.8.26_vue@3.0.0-beta.18
+  '@pathscale/vue3-ui': 0.8.31_vue@3.0.0-beta.18
   '@rollup/plugin-babel': 5.0.4_@babel+core@7.10.4+rollup@2.18.2
   '@rollup/plugin-commonjs': 13.0.0_rollup@2.18.2
   '@rollup/plugin-json': 4.1.0_rollup@2.18.2
@@ -923,6 +923,13 @@ packages:
       '@babel/core': ^7.0.0-0
     resolution:
       integrity: sha512-Ra3JXOHBq2xd56xSF7lMKXdjBn3T772Y1Wet3yWnkDly9zHvJki029tAFzvAAK5cf4YV3yoxuP61crYRol6SVg==
+  /@babel/runtime-corejs3/7.10.4:
+    dependencies:
+      core-js-pure: 3.6.5
+      regenerator-runtime: 0.13.5
+    dev: true
+    resolution:
+      integrity: sha512-BFlgP2SoLO9HJX9WBwN67gHWMBhDX/eDz64Jajd6mR/UAUzqrNMm99d4qHnVaKscAElZoFiPv+JpR/Siud5lXw==
   /@babel/runtime/7.10.4:
     dependencies:
       regenerator-runtime: 0.13.5
@@ -1394,14 +1401,14 @@ packages:
     hasBin: true
     resolution:
       integrity: sha512-bLUTjIKsJg0LuJbQ7wpuucs81hpjsWlDBCZ+7fFHCbjn7Z/inFjaapsFJ+bihwEfnbOxU5VojxrLXJNkfuLkEQ==
-  /@pathscale/vue3-ui/0.8.26_vue@3.0.0-beta.18:
+  /@pathscale/vue3-ui/0.8.31_vue@3.0.0-beta.18:
     dependencies:
       vue: 3.0.0-beta.18
     dev: true
     peerDependencies:
-      vue: ^3.0.0-beta.17
+      vue: ^3.0.0-beta.18
     resolution:
-      integrity: sha512-PGM/fhh6C7fVxyRlBB0jufYYasTY1LsCyMkRjpgyfHBtANuh59sJ4BNK8+LAuins8ON9kiUgAxEp95bbu/9rYA==
+      integrity: sha512-JsskoU2J8CZyohqGUmzW1pxq1L7AhmKGTBayLE6nKuquFBf0rcRW8tJWUeSeNifMTzPiGtq3gl8kFMl/o53ejA==
   /@rollup/plugin-babel/5.0.4_@babel+core@7.10.4+rollup@2.18.2:
     dependencies:
       '@babel/core': 7.10.4
@@ -2166,6 +2173,22 @@ packages:
     dev: true
     resolution:
       integrity: sha512-3YDiu347mtVtjpyV3u5kVqQLP242c06zwDOgpeRnybmXlYYsLbtTrUBUm8i8srONt+FWobl5aibnU1030PeeuA==
+  /babel-eslint/10.1.0_eslint@7.3.1:
+    dependencies:
+      '@babel/code-frame': 7.10.4
+      '@babel/parser': 7.10.4
+      '@babel/traverse': 7.10.4
+      '@babel/types': 7.10.4
+      eslint: 7.3.1
+      eslint-visitor-keys: 1.3.0
+      resolve: 1.17.0
+    dev: true
+    engines:
+      node: '>=6'
+    peerDependencies:
+      eslint: '>= 4.12.1'
+    resolution:
+      integrity: sha512-ifWaTHQ0ce+448CYop8AdrQiBsGrnC+bMgfyKFdi6EsPLTAWG+QfyDeM6OH+FmWnKvEq5NnBMLvlBUPKQZoDSg==
   /babel-jest/26.1.0_@babel+core@7.10.4:
     dependencies:
       '@babel/core': 7.10.4
@@ -2343,7 +2366,7 @@ packages:
   /browserslist/4.12.2:
     dependencies:
       caniuse-lite: 1.0.30001093
-      electron-to-chromium: 1.3.484
+      electron-to-chromium: 1.3.487
       escalade: 3.0.1
       node-releases: 1.1.58
     dev: true
@@ -2838,6 +2861,11 @@ packages:
     dev: true
     resolution:
       integrity: sha512-7ItTKOhOZbznhXAQ2g/slGg1PJV5zDO/WdkTwi7UEOJmkvsE32PWvx6mKtDjiMpjnR2CNf6BAD6sSxIlv7ptng==
+  /core-js-pure/3.6.5:
+    dev: true
+    requiresBuild: true
+    resolution:
+      integrity: sha512-lacdXOimsiD0QyNf9BC/mxivNJ/ybBGJXQFKzRekp1WTHoVUWsUHEn+2T8GJAzzIhyOuXA+gOxCVN3l+5PLPUA==
   /core-js/2.6.11:
     deprecated: 'core-js@<3 is no longer maintained and not recommended for usage due to the number of issues. Please, upgrade your dependencies to the actual version of core-js@3.'
     dev: true
@@ -3114,6 +3142,14 @@ packages:
       node: '>=0.10.0'
     resolution:
       integrity: sha1-9lNNFRSCabIDUue+4m9QH5oZEpA=
+  /decamelize/3.2.0:
+    dependencies:
+      xregexp: 4.3.0
+    dev: true
+    engines:
+      node: '>=6'
+    resolution:
+      integrity: sha512-4TgkVUsmmu7oCSyGBm5FvfMoACuoh9EOidm7V5/J2X2djAwwt57qb3F2KMP2ITqODTCSwb+YRV+0Zqrv18k/hw==
   /decimal.js/10.2.0:
     dev: true
     resolution:
@@ -3379,10 +3415,10 @@ packages:
     dev: true
     resolution:
       integrity: sha1-OoOpBOVDUyh4dMVkt1SThoSamMk=
-  /electron-to-chromium/1.3.484:
+  /electron-to-chromium/1.3.487:
     dev: true
     resolution:
-      integrity: sha512-esh5mmjAGl6HhAaYgHlDZme+jCIc+XIrLrBTwxviE+pM64UBmdLUIHLlrPzJGbit7hQI1TR/oGDQWCvQZ5yrFA==
+      integrity: sha512-m4QS3IDShxauFfYFpnEzRCcUI55oKB9acEnHCuY/hSCZMz9Pz2KJj+UBnGHxRxS/mS1aphqOQ5wI6gc3yDZ7ew==
   /email-addresses/3.1.0:
     dev: true
     resolution:
@@ -3591,7 +3627,7 @@ packages:
       clean-regexp: 1.0.0
       eslint: 7.3.1
       eslint-ast-utils: 1.1.0
-      eslint-template-visitor: 2.0.0_eslint@7.3.1
+      eslint-template-visitor: 2.2.0_eslint@7.3.1
       eslint-utils: 2.1.0
       import-modules: 2.0.0
       lodash: 4.17.15
@@ -3617,17 +3653,18 @@ packages:
       node: '>=8.0.0'
     resolution:
       integrity: sha512-iiGRvtxWqgtx5m8EyQUJihBloE4EnYeGE/bz1wSPwJE6tZuJUtHlhqDM4Xj2ukE8Dyy1+HCZ4hE0fzIVMzb58w==
-  /eslint-template-visitor/2.0.0_eslint@7.3.1:
+  /eslint-template-visitor/2.2.0_eslint@7.3.1:
     dependencies:
+      babel-eslint: 10.1.0_eslint@7.3.1
       eslint: 7.3.1
       eslint-visitor-keys: 1.3.0
-      espree: 7.1.0
+      esquery: 1.3.1
       multimap: 1.1.0
     dev: true
     peerDependencies:
       eslint: '>=7.0.0'
     resolution:
-      integrity: sha512-WijrLXWk/TiiG9FBTeEeb2pj/nD8H4eKIYx1DhTv/c7QoFmelE5P+3gzKUcXWZz88AI2+Wjse9DTV8lXrhcUsw==
+      integrity: sha512-6X476P0FLUg91l3wvyUU9ZI/KI2JM7BOKpbf4gZjLWW6K4slwcOQxHCWyIQ1bux5oDtOKDdhGQQVWWQGcxcdhA==
   /eslint-utils/2.1.0:
     dependencies:
       eslint-visitor-keys: 1.3.0
@@ -5204,7 +5241,7 @@ packages:
       jest-util: 26.1.0
       jest-validate: 26.1.0
       prompts: 2.3.2
-      yargs: 15.3.1
+      yargs: 15.4.0
     dev: true
     engines:
       node: '>= 10.14.2'
@@ -5502,7 +5539,7 @@ packages:
       jest-validate: 26.1.0
       slash: 3.0.0
       strip-bom: 4.0.0
-      yargs: 15.3.1
+      yargs: 15.4.0
     dev: true
     engines:
       node: '>= 10.14.2'
@@ -9189,6 +9226,12 @@ packages:
     dev: true
     resolution:
       integrity: sha512-JZnDKK8B0RCDw84FNdDAIpZK+JuJw+s7Lz8nksI7SIuU3UXJJslUthsi+uWBUYOwPFwW7W7PRLRfUKpxjtjFCw==
+  /xregexp/4.3.0:
+    dependencies:
+      '@babel/runtime-corejs3': 7.10.4
+    dev: true
+    resolution:
+      integrity: sha512-7jXDIFXh5yJ/orPn4SXjuVrWWoi4Cr8jfV1eHv9CixKSbU+jY4mxfrBwAuDvupPNKpMUY+FeIqsVw/JLT9+B8g==
   /xtend/4.0.2:
     dev: true
     engines:
@@ -9224,10 +9267,10 @@ packages:
       node: '>=6'
     resolution:
       integrity: sha512-o50j0JeToy/4K6OZcaQmW6lyXXKhq7csREXcDwk2omFPJEwUNOVtJKvmDr9EI1fAJZUyZcRF7kxGBWmRXudrCQ==
-  /yargs/15.3.1:
+  /yargs/15.4.0:
     dependencies:
       cliui: 6.0.0
-      decamelize: 1.2.0
+      decamelize: 3.2.0
       find-up: 4.1.0
       get-caller-file: 2.0.5
       require-directory: 2.1.1
@@ -9241,7 +9284,7 @@ packages:
     engines:
       node: '>=8'
     resolution:
-      integrity: sha512-92O1HWEjw27sBfgmXiixJWT5hRBp2eobqXicLtPBIDBhYB+1HpwZlXmbW2luivBJHBzki+7VyCLRtAkScbTBQA==
+      integrity: sha512-D3fRFnZwLWp8jVAAhPZBsmeIHY8tTsb8ItV9KaAaopmC6wde2u6Yw29JBIZHXw14kgkRnYmDgmQU4FVMDlIsWw==
   /yauzl/2.10.0:
     dependencies:
       buffer-crc32: 0.2.13
@@ -9260,7 +9303,7 @@ specifiers:
   '@commitlint/prompt-cli': ^9.0.1
   '@fullhuman/postcss-purgecss': ^2.3.0
   '@pathscale/bulma-pull-2981-css-var-only': ^0.9.1
-  '@pathscale/vue3-ui': ^0.8.26
+  '@pathscale/vue3-ui': ^0.8.31
   '@rollup/plugin-babel': ^5.0.4
   '@rollup/plugin-commonjs': ^13.0.0
   '@rollup/plugin-json': ^4.1.0

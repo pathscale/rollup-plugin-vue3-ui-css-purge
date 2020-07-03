@@ -19,7 +19,16 @@ export function parseQuery(id: string): Query {
   } as Query;
 }
 
-export const humanlizePath = (filepath: string): string => path.relative(process.cwd(), filepath);
+export function normalizePath(...paths: string[]): string {
+  const f = path.join(...paths).replace(/\\/g, "/");
+  if (/^\.[/\\]/.test(paths[0])) return `./${f}`;
+  return f;
+}
+
+export const relativePath = (from: string, to: string): string =>
+  normalizePath(path.relative(from, to));
+
+export const humanlizePath = (file: string): string => relativePath(process.cwd(), file);
 
 export const kebablize = (s: string): string =>
   s.replace(/^(.)/, str => str.toLowerCase()).replace(/([A-Z])/g, str => `-${str.toLowerCase()}`);
