@@ -4,7 +4,7 @@ import { sync as resolveSync } from "resolve";
 import * as jsparser from "@babel/parser";
 import traverse from "@babel/traverse";
 import * as htmlparser from "htmlparser2";
-import { kebablize, pascalize, camelize, humanlizePath, normalizePath } from "./utils";
+import { humanlizePath, normalizePath } from "./utils";
 import { parseSFC, isVueSFC } from "./analyzer-utils";
 
 const vue3ui = resolveSync("@pathscale/vue3-ui", {
@@ -47,16 +47,6 @@ export function analyze(
     {
       onopentagname(name) {
         whitelist.add(name);
-
-        // TODO: Proper selector
-        const m = [
-          ...(mappings[name] ?? []),
-          ...(mappings[kebablize(name)] ?? []),
-          ...(mappings[camelize(name)] ?? []),
-          ...(mappings[pascalize(name)] ?? []),
-        ];
-
-        for (const cl of m) whitelist.add(cl);
       },
 
       onattribute(_, data) {
@@ -103,6 +93,12 @@ export function analyze(
     const ast = jsparser.parse(code, { sourceType: "unambiguous" });
     traverse(ast, {
       // eslint-disable-next-line @typescript-eslint/naming-convention
+      StringLiteral({ node }) {
+        if (!isVueSFC(id)) return;
+        for (const cl of node.value.split(" ")) whitelist.add(cl);
+      },
+
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       ExportNamedDeclaration({ node }) {
         if (!node.source) return;
         const depId = resolveSource(id, node.source.value);
@@ -135,5 +131,18 @@ export function analyze(
     traverseSource(id, code);
   }
 
-  return [...whitelist].sort();
+  const wl = [...whitelist]
+    // Delete some garbage
+    .filter(_v => {
+      const v = _v.trim();
+      const garbage = ["vue", "slot"];
+      if (!v) return false;
+      if (/[A-Z]/.test(v)) return false;
+      if (/[./:\\]/.test(v)) return false;
+      if (garbage.includes(v)) return false;
+      return true;
+    })
+    .sort();
+
+  return wl;
 }

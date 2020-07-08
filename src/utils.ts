@@ -29,16 +29,3 @@ export const relativePath = (from: string, to: string): string =>
   normalizePath(path.relative(from, to));
 
 export const humanlizePath = (file: string): string => relativePath(process.cwd(), file);
-
-export const kebablize = (s: string): string =>
-  s.replace(/^(.)/, str => str.toLowerCase()).replace(/([A-Z])/g, str => `-${str.toLowerCase()}`);
-
-export const camelize = (s: string): string =>
-  s
-    .replace(/^(.)/, str => str.toLowerCase())
-    .replace(/-([a-z])/g, str => str.toUpperCase().slice(1));
-
-export const pascalize = (s: string): string =>
-  s
-    .replace(/^(.)/, str => str.toUpperCase())
-    .replace(/-([a-z])/g, str => str.toUpperCase().slice(1));
