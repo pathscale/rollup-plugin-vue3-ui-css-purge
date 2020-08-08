@@ -7,6 +7,7 @@ import { Options } from "./types";
 import { inspect } from "util";
 
 const generator = (options: Options = {}): Plugin => {
+  const filter = createFilter(options.include, options.exclude ?? ["**/node_modules/**"]);
   const isVue3UICSS = createFilter([
     "**/node_modules/@pathscale/vue3-ui/**/*.css",
     "**/node_modules/@pathscale/bulma-css-var-only/**/*.css",
@@ -27,7 +28,7 @@ const generator = (options: Options = {}): Plugin => {
         "body",
         "app",
         "div",
-        ...analyze(inputOpts.input, options.debug),
+        ...analyze(inputOpts.input, options.debug ?? false, filter),
       ].map(b => b.replace(/[$()*+.?[\\\]^{|}-]/g, "\\$&"));
 
       for (const b of base) {

@@ -23,13 +23,14 @@ const mappings = require(mappingsFile) as Record<string, string[]>;
 
 export function analyze(
   input: string | string[] | Record<string, string>,
-  debug?: boolean,
+  debug: boolean,
+  filter: (id: string) => boolean,
 ): string[] {
-  const extensions = [".ts", ".tsx", ".mjs", ".js", ".jsx", ".vue", ".json"];
+  const extensions = [".ts", ".tsx", ".mjs", ".js", ".jsx", ".vue"];
 
   const isSupported = (id: string) => {
     const lowerId = normalizePath(id.toLowerCase());
-    if (lowerId.includes("/node_modules/")) return false;
+    if (!filter(lowerId)) return false;
     return extensions.some(ext => lowerId.endsWith(ext));
   };
 
