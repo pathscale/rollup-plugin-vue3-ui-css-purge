@@ -1,7 +1,7 @@
 ncu -u --dep prod,dev --concurrency 16 -x `
 vue-composable
 
-ncu -u --dep prod,dev --concurrency 16 -n -f `
+ncu -u --dep prod,dev --concurrency 16 --target newest -f `
 @pathscale/vue3-ui,`
 @pathscale/bulma-css-var-only,`
 @pathscale/bulma-pull-2981-css-var-only,`

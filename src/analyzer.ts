@@ -91,7 +91,7 @@ export function analyze(
     const code = extract(rawCode, id);
     if (!code) return;
 
-    const ast = jsparser.parse(code, { sourceType: "unambiguous" });
+    const ast = jsparser.parse(code, { sourceType: "unambiguous", plugins: ["typescript"] });
     traverse(ast, {
       // eslint-disable-next-line @typescript-eslint/naming-convention
       StringLiteral({ node }) {
