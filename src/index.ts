@@ -29,7 +29,6 @@ const generator = (options: Options = {}): Plugin => {
       "decimal",
       "doExpressions",
       "dynamicImport",
-      "estree",
       "exportDefaultFrom",
       "functionBind",
       "functionSent",
