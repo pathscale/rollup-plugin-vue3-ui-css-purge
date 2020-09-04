@@ -19,6 +19,7 @@ const generator = (options: Options = {}): Plugin => {
   const whitelist = new Set<RegExp>();
 
   const parserDefaults: jsparser.ParserOptions = {
+    sourceType: "unambiguous",
     plugins: [
       "asyncGenerators",
       "bigInt",
@@ -26,7 +27,6 @@ const generator = (options: Options = {}): Plugin => {
       "classPrivateProperties",
       "classProperties",
       "decimal",
-      "decorators",
       "doExpressions",
       "dynamicImport",
       "estree",
@@ -36,14 +36,12 @@ const generator = (options: Options = {}): Plugin => {
       "importMeta",
       "jsx",
       "logicalAssignment",
-      "moduleAttributes",
       "nullishCoalescingOperator",
       "numericSeparator",
       "objectRestSpread",
       "optionalCatchBinding",
       "optionalChaining",
       "partialApplication",
-      "pipelineOperator",
       "placeholders",
       "privateIn",
       "throwExpressions",
@@ -62,12 +60,10 @@ const generator = (options: Options = {}): Plugin => {
         "body",
         "app",
         "div",
-        ...analyze(
-          inputOpts.input,
-          options.debug ?? false,
-          filter,
-          options.parserOpts ?? parserDefaults,
-        ),
+        ...analyze(inputOpts.input, options.debug ?? false, filter, {
+          ...parserDefaults,
+          ...options.parserOpts,
+        }),
       ].map(b => b.replace(/[$()*+.?[\\\]^{|}-]/g, "\\$&"));
 
       for (const b of base) {
