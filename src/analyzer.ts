@@ -25,6 +25,7 @@ export function analyze(
   input: string | string[] | Record<string, string>,
   debug: boolean,
   filter: (id: string) => boolean,
+  parserOpts: jsparser.ParserOptions,
 ): string[] {
   const extensions = [".ts", ".tsx", ".mjs", ".js", ".jsx", ".vue"];
 
@@ -91,7 +92,7 @@ export function analyze(
     const code = extract(rawCode, id);
     if (!code) return;
 
-    const ast = jsparser.parse(code, { sourceType: "unambiguous", plugins: ["typescript"] });
+    const ast = jsparser.parse(code, { sourceType: "unambiguous", ...parserOpts });
     traverse(ast, {
       // eslint-disable-next-line @typescript-eslint/naming-convention
       StringLiteral({ node }) {

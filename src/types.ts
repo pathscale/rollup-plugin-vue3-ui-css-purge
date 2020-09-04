@@ -1,3 +1,5 @@
+import * as jsparser from "@babel/parser";
+
 /** `@pathscale/rollup-plugin-vue3-ui-css-purge`'s full option list */
 export interface Options {
   /** Files to include for processing */
@@ -6,6 +8,8 @@ export interface Options {
   exclude?: ReadonlyArray<string | RegExp> | string | RegExp | null;
   /** Enable debug output */
   debug?: boolean;
+  /** Options for parser */
+  parserOpts?: jsparser.ParserOptions;
 }
 
 /** Parsed Vue SFC query */

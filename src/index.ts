@@ -5,6 +5,7 @@ import purgecss from "@fullhuman/postcss-purgecss";
 import { analyze } from "./analyzer";
 import { Options } from "./types";
 import { inspect } from "util";
+import * as jsparser from "@babel/parser";
 
 const generator = (options: Options = {}): Plugin => {
   const filter = createFilter(options.include, options.exclude ?? ["**/node_modules/**"]);
@@ -17,6 +18,39 @@ const generator = (options: Options = {}): Plugin => {
 
   const whitelist = new Set<RegExp>();
 
+  const parserDefaults: jsparser.ParserOptions = {
+    plugins: [
+      "asyncGenerators",
+      "bigInt",
+      "classPrivateMethods",
+      "classPrivateProperties",
+      "classProperties",
+      "decimal",
+      "decorators",
+      "doExpressions",
+      "dynamicImport",
+      "estree",
+      "exportDefaultFrom",
+      "functionBind",
+      "functionSent",
+      "importMeta",
+      "jsx",
+      "logicalAssignment",
+      "moduleAttributes",
+      "nullishCoalescingOperator",
+      "numericSeparator",
+      "objectRestSpread",
+      "optionalCatchBinding",
+      "optionalChaining",
+      "partialApplication",
+      "pipelineOperator",
+      "placeholders",
+      "privateIn",
+      "throwExpressions",
+      "typescript",
+    ],
+  };
+
   const plugin: Plugin = {
     name: "vue3-ui-css-purge",
 
@@ -28,7 +62,12 @@ const generator = (options: Options = {}): Plugin => {
         "body",
         "app",
         "div",
-        ...analyze(inputOpts.input, options.debug ?? false, filter),
+        ...analyze(
+          inputOpts.input,
+          options.debug ?? false,
+          filter,
+          options.parserOpts ?? parserDefaults,
+        ),
       ].map(b => b.replace(/[$()*+.?[\\\]^{|}-]/g, "\\$&"));
 
       for (const b of base) {
