@@ -130,7 +130,12 @@ export function analyze(
     const id = idList.pop();
     if (!id) continue;
     const code = fs.readFileSync(id, "utf8");
-    traverseSource(id, code);
+    try {
+      traverseSource(id, code);
+    } catch (error) {
+      debug &&
+        console.log(`ANALYZER - PROCESSING ERROR (${humanlizePath(id)}, ${JSON.stringify(error)})`);
+    }
   }
 
   const wl = [...whitelist]
