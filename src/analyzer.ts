@@ -48,12 +48,16 @@ export function analyze(
   const parser = new htmlparser.Parser(
     {
       onopentagname(name) {
+        debug && console.log(`ADDED TAG ${name} TO WHITELIST`);
         whitelist.add(name);
       },
 
       onattribute(_, data) {
         // TODO: Filter out the attributes
-        for (const cl of data.split(" ")) whitelist.add(cl);
+        for (const cl of data.split(" ")) {
+          whitelist.add(cl);
+          debug && console.log(`ADDED ATTRIBUTE ${cl} TO WHITELIST`);
+        }
       },
     },
     { decodeEntities: true, lowerCaseTags: false, lowerCaseAttributeNames: true },
@@ -119,8 +123,15 @@ export function analyze(
         for (const spec of node.specifiers) {
           if (spec.type !== "ImportSpecifier") continue;
           const wl = mappings[spec.imported.name];
-          if (wl && debug) console.log(`ANALYZER - VUE3-UI COMPONENT (${spec.imported.name})`);
-          if (wl) for (const i of wl) whitelist.add(i);
+          if (wl && debug)
+            console.log(
+              `ANALYZER - VUE3-UI COMPONENT (${spec.imported.name}), DEPENDS ON CLASSES`,
+              wl,
+            );
+          if (wl)
+            for (const i of wl) {
+              whitelist.add(i);
+            }
         }
       },
     });

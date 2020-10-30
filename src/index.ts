@@ -72,8 +72,8 @@ const generator = (options: Options = {}): Plugin => {
 
       options.debug &&
         console.log(
-          `CSS PURGER - WHITELIST (${whitelist.size} entries):\n`,
-          inspect([...whitelist], { showHidden: false, depth: null, maxArrayLength: null }),
+          `CSS PURGER - WHITELIST:\n`,
+          inspect(new Set([...base]), { showHidden: false, depth: null, maxArrayLength: null }),
         );
     },
 
@@ -83,10 +83,12 @@ const generator = (options: Options = {}): Plugin => {
       const purger = postcss(
         purgecss({
           content: [],
-          whitelistPatterns: [...whitelist],
-          whitelistPatternsChildren: [...whitelist],
+          safelist: {
+            standard: [...whitelist],
+            deep: [...whitelist],
+          },
           variables: true,
-          keyframes: true
+          keyframes: true,
         }),
       );
 
