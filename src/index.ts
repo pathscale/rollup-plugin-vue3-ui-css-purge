@@ -5,6 +5,7 @@ import purgecss from "@fullhuman/postcss-purgecss";
 import { analyze } from "./analyzer";
 import { Options } from "./types";
 import { inspect } from "util";
+import postCleaner from "./post-cleaner"
 import * as jsparser from "@babel/parser";
 
 const generator = (options: Options = {}): Plugin => {
@@ -94,7 +95,7 @@ const generator = (options: Options = {}): Plugin => {
 
       const { css } = await purger.process(code, { from: id });
 
-      return { code: css };
+      return { code: postCleaner(css) };
     },
   };
 
