@@ -83,10 +83,7 @@ const generator = (options: Options = {}): Plugin => {
     },
 
     async transform(code, id) {
-      if (isVue3UICSS(id)) {
-        console.log("TRANSFORM VUE3 CSS INTO NOTHING")
-        return "";
-      };
+      if (isVue3UICSS(id)) return "";
 
       if (includesMagicStrings(code)) {
         const newJs = replaceImportsWithBundle(code);
