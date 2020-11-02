@@ -5,8 +5,12 @@ import purgecss from "@fullhuman/postcss-purgecss";
 import { analyze } from "./analyzer";
 import { Options } from "./types";
 import { inspect } from "util";
+import { includesMagicStrings, replaceImportsWithBundle, makeVue3UiBundle } from "./utils"
 import postCleaner from "./post-cleaner"
 import * as jsparser from "@babel/parser";
+import fs from "fs";
+import path from "path";
+
 
 const generator = (options: Options = {}): Plugin => {
   const filter = createFilter(options.include, options.exclude ?? ["**/node_modules/**"]);
@@ -79,7 +83,19 @@ const generator = (options: Options = {}): Plugin => {
     },
 
     async transform(code, id) {
-      if (!isVue3UICSS(id)) return null;
+      if (isVue3UICSS(id)) {
+        console.log("TRANSFORM VUE3 CSS INTO NOTHING")
+        return "";
+      };
+
+      if (includesMagicStrings(code)) {
+        const newJs = replaceImportsWithBundle(code);
+        const vue3uiBundle = makeVue3UiBundle();
+        fs.writeFileSync(`${path.dirname(id)}/vue3-bundle.css`, vue3uiBundle);
+        return newJs;
+      }
+
+      if (!id.endsWith("css")) return null;
 
       const purger = postcss(
         purgecss({
@@ -94,7 +110,6 @@ const generator = (options: Options = {}): Plugin => {
       );
 
       const { css } = await purger.process(code, { from: id });
-
       return { code: postCleaner(css) };
     },
   };

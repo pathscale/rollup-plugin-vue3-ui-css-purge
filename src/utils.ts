@@ -1,6 +1,7 @@
 import path from "path";
 import qs from "query-string";
 import { Query } from "./types";
+import fs from "fs";
 
 export function parseQuery(id: string): Query {
   const [filename, query] = id.split("?", 2);
@@ -29,3 +30,30 @@ export const relativePath = (from: string, to: string): string =>
   normalizePath(path.relative(from, to));
 
 export const humanlizePath = (file: string): string => relativePath(process.cwd(), file);
+
+export const includesMagicStrings = (code: string): boolean =>
+  code.includes("import '@pathscale/bulma-pull-2981-css-var-only'") && code.includes("import '@pathscale/bulma-extensions-css-var'")
+
+export const replaceImportsWithBundle = (code: string): string => {
+  let newJs = code.replace(
+    "import '@pathscale/bulma-pull-2981-css-var-only'",
+    ""
+  );
+  newJs = code.replace(
+    "import '@pathscale/bulma-extensions-css-var'",
+    "import './vue3-bundle.css'"
+  );
+
+  return newJs
+}
+
+export const makeVue3UiBundle = (): string => {
+  return fs.readFileSync(
+    "./node_modules/@pathscale/bulma-pull-2981-css-var-only/css/bulma.css",
+    "utf-8"
+  ) +
+    fs.readFileSync(
+      "node_modules/@pathscale/bulma-extensions-css-var/css/bulma-extensions-css-var.css",
+      "utf-8"
+    );
+}
