@@ -6,7 +6,7 @@ import { analyze } from "./analyzer";
 import { Options } from "./types";
 import { inspect } from "util";
 import { includesMagicStrings, replaceImportsWithBundle, makeVue3UiBundle } from "./utils"
-// import postCleaner from "./post-cleaner"
+import postCleaner from "./post-cleaner"
 import * as jsparser from "@babel/parser";
 import fs from "fs";
 import path from "path";
@@ -112,7 +112,7 @@ const generator = (options: Options = {}): Plugin => {
       );
 
       const { css } = await purger.process(code, { from: id });
-      return { code: css };
+      return { code: postCleaner(css) };
     },
   };
 
