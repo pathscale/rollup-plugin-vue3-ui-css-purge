@@ -6,7 +6,7 @@ import { analyze } from "./analyzer";
 import { Options } from "./types";
 import { inspect } from "util";
 import { includesMagicStrings, replaceImportsWithBundle, makeVue3UiBundle } from "./utils"
-import postCleaner from "./post-cleaner"
+// import postCleaner from "./post-cleaner"
 import * as jsparser from "@babel/parser";
 import fs from "fs";
 import path from "path";
@@ -20,7 +20,7 @@ const generator = (options: Options = {}): Plugin => {
     "**/node_modules/@pathscale/bulma-extensions-css-var/**/*.css",
     "**/node_modules/@pathscale/bulma-pull-2981-css-var-only/**/*.css",
   ]);
-
+  let foundMain = false;
   const whitelist = new Set<RegExp>();
 
   const parserDefaults: jsparser.ParserOptions = {
@@ -82,32 +82,37 @@ const generator = (options: Options = {}): Plugin => {
         );
     },
 
+    load(id) {
+      console.log("LOADING", id)
+      return null;
+    },
+
     async transform(code, id) {
       if (isVue3UICSS(id)) return "";
 
-      if (includesMagicStrings(code)) {
+      if (includesMagicStrings(code) && !foundMain) {
+        console.log("FOUND MAIN BROK", id)
         const newJs = replaceImportsWithBundle(code);
         const vue3uiBundle = makeVue3UiBundle();
         fs.writeFileSync(`${path.dirname(id)}/vue3-bundle.css`, vue3uiBundle);
+        console.log("writing pre-bundle into", `${path.dirname(id)}/vue3-bundle.css`)
+        foundMain = true;
+        console.log(`returning this as ${id}`, newJs)
         return newJs;
       }
 
-      if (!id.endsWith("css")) return null;
+      if (!id.includes("vue3-bundle.css")) return null;
 
       const purger = postcss(
         purgecss({
           content: [],
-          safelist: {
-            standard: [...whitelist],
-            deep: [...whitelist],
-          },
-          variables: true,
-          keyframes: true,
+            whitelistPatterns: [...whitelist],
+            whitelistPatternsChildren: [...whitelist],
         }),
       );
 
       const { css } = await purger.process(code, { from: id });
-      return { code: postCleaner(css) };
+      return { code: css };
     },
   };
 

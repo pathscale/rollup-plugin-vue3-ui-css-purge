@@ -39,7 +39,7 @@ export const replaceImportsWithBundle = (code: string): string => {
     "import '@pathscale/bulma-pull-2981-css-var-only'",
     ""
   );
-  newJs = code.replace(
+  newJs = newJs.replace(
     "import '@pathscale/bulma-extensions-css-var'",
     "import './vue3-bundle.css'"
   );
