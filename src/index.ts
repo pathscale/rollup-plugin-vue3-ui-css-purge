@@ -103,6 +103,7 @@ const generator = (options: Options = {}): Plugin => {
           content: [],
             whitelistPatterns: [...whitelist],
             whitelistPatternsChildren: [...whitelist],
+            keyframes: true,
         }),
       );
 
