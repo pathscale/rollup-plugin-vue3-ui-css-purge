@@ -21,6 +21,7 @@ const generator = (options: Options = {}): Plugin => {
     "**/node_modules/@pathscale/bulma-pull-2981-css-var-only/**/*.css",
   ]);
   let foundMain = false;
+  let mainLocation = "";
   const whitelist = new Set<RegExp>();
 
   const parserDefaults: jsparser.ParserOptions = {
@@ -82,26 +83,20 @@ const generator = (options: Options = {}): Plugin => {
         );
     },
 
-    load(id) {
-      console.log("LOADING", id)
-      return null;
-    },
-
     async transform(code, id) {
       if (isVue3UICSS(id)) return "";
 
       if (includesMagicStrings(code) && !foundMain) {
-        console.log("FOUND MAIN BROK", id)
+        options.debug && console.log("FOUND ENTRY POINT", id)
         const newJs = replaceImportsWithBundle(code);
         const vue3uiBundle = makeVue3UiBundle();
-        fs.writeFileSync(`${path.dirname(id)}/vue3-bundle.css`, vue3uiBundle);
-        console.log("writing pre-bundle into", `${path.dirname(id)}/vue3-bundle.css`)
+        fs.writeFileSync(`${path.dirname(id)}/vue3-ui-bundle.css`, vue3uiBundle);
         foundMain = true;
-        console.log(`returning this as ${id}`, newJs)
+        mainLocation = `${path.dirname(id)}/vue3-ui-bundle.css`;
         return newJs;
       }
 
-      if (!id.includes("vue3-bundle.css")) return null;
+      if (!id.includes("vue3-ui-bundle.css")) return null;
 
       const purger = postcss(
         purgecss({
@@ -114,6 +109,15 @@ const generator = (options: Options = {}): Plugin => {
       const { css } = await purger.process(code, { from: id });
       return { code: postCleaner(css) };
     },
+
+    buildEnd() {
+      try {
+        fs.unlinkSync(mainLocation)
+      }
+      catch {
+        this.warn("vue3-ui-bundle.css was not found, please use recomended style packages for vue3-ui")
+      }
+    }
   };
 
   return plugin;

@@ -41,7 +41,7 @@ export const replaceImportsWithBundle = (code: string): string => {
   );
   newJs = newJs.replace(
     "import '@pathscale/bulma-extensions-css-var'",
-    "import './vue3-bundle.css'"
+    "import './vue3-ui-bundle.css'"
   );
 
   return newJs
