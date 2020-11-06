@@ -17,9 +17,12 @@ const vue3ui = resolveSync("@pathscale/vue3-ui", {
   },
 });
 
-const mappingsFile = path.join(path.dirname(vue3ui), "mappings.json");
+const mappingsFile = path.join(path.dirname(vue3ui), "classes.json");
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const mappings = require(mappingsFile) as Record<string, string[]>;
+const mappings = require(mappingsFile) as Record<
+  string,
+  { always: string[]; optional: string[]; passthrough: string[] }
+>;
 
 export function analyze(
   input: string | string[] | Record<string, string>,
@@ -37,6 +40,7 @@ export function analyze(
 
   const traversed = new Set<string>();
   const whitelist = new Set<string>(["*", "html", "head", "body", "div", "app"]);
+  let currentTag = "";
 
   const idList = (Array.isArray(input)
     ? input
@@ -48,15 +52,18 @@ export function analyze(
   const parser = new htmlparser.Parser(
     {
       onopentagname(name) {
-        debug && console.log(`ADDED TAG ${name} TO WHITELIST`);
         whitelist.add(name);
+        currentTag = name;
       },
 
-      onattribute(_, data) {
-        // TODO: Filter out the attributes
+      onattribute(prop, data) {
         for (const cl of data.split(" ")) {
           whitelist.add(cl);
-          debug && console.log(`ADDED ATTRIBUTE ${cl} TO WHITELIST`);
+        }
+
+        if (currentTag.startsWith("v-") && mappings[currentTag].optional.includes(`is-${prop}`)) {
+          whitelist.add(`is-${prop}`);
+          debug && console.log("whitelisted", `is-${prop}`);
         }
       },
     },
@@ -122,10 +129,11 @@ export function analyze(
 
         for (const spec of node.specifiers) {
           if (spec.type !== "ImportSpecifier") continue;
-          const wl = mappings[spec.imported.name];
+          const wl = mappings[spec.imported.name]?.always ?? [];
+
           if (wl && debug)
             console.log(
-              `ANALYZER - VUE3-UI COMPONENT (${spec.imported.name}), DEPENDS ON CLASSES`,
+              `ANALYZER - VUE3-UI COMPONENT (${spec.imported.name}), DEPENDS ON DEFAULT CLASSES`,
               wl,
             );
           if (wl)
