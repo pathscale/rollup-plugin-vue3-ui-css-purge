@@ -4,7 +4,7 @@ import { sync as resolveSync } from "resolve";
 import * as jsparser from "@babel/parser";
 import traverse from "@babel/traverse";
 import * as htmlparser from "htmlparser2";
-import { humanlizePath, normalizePath } from "./utils";
+import { humanlizePath, normalizePath, camelCase } from "./utils";
 import { parseSFC, isVueSFC } from "./analyzer-utils";
 
 const vue3ui = resolveSync("@pathscale/vue3-ui", {
@@ -61,7 +61,10 @@ export function analyze(
           whitelist.add(cl);
         }
 
-        if (currentTag.startsWith("v-") && mappings[currentTag].optional.includes(`is-${prop}`)) {
+        if (
+          currentTag.startsWith("v-") &&
+          mappings[camelCase(currentTag)]?.optional.includes(`is-${prop}`)
+        ) {
           whitelist.add(`is-${prop}`);
           debug && console.log("whitelisted", `is-${prop}`);
         }
@@ -152,8 +155,7 @@ export function analyze(
     try {
       traverseSource(id, code);
     } catch (error) {
-      debug &&
-        console.log(`ANALYZER - PROCESSING ERROR (${humanlizePath(id)}, ${JSON.stringify(error)})`);
+      debug && console.log(`ANALYZER - PROCESSING ERROR (${humanlizePath(id)}`, error);
     }
   }
 

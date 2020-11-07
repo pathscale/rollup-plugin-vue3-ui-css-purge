@@ -32,28 +32,36 @@ export const relativePath = (from: string, to: string): string =>
 export const humanlizePath = (file: string): string => relativePath(process.cwd(), file);
 
 export const includesMagicStrings = (code: string): boolean =>
-  code.includes("import '@pathscale/bulma-pull-2981-css-var-only'") && code.includes("import '@pathscale/bulma-extensions-css-var'")
+  code.includes("import '@pathscale/bulma-pull-2981-css-var-only'") &&
+  code.includes("import '@pathscale/bulma-extensions-css-var'");
 
 export const replaceImportsWithBundle = (code: string): string => {
-  let newJs = code.replace(
-    "import '@pathscale/bulma-pull-2981-css-var-only'",
-    ""
-  );
+  let newJs = code.replace("import '@pathscale/bulma-pull-2981-css-var-only'", "");
   newJs = newJs.replace(
     "import '@pathscale/bulma-extensions-css-var'",
-    "import './vue3-ui-bundle.css'"
+    "import './vue3-ui-bundle.css'",
   );
 
-  return newJs
-}
+  return newJs;
+};
 
 export const makeVue3UiBundle = (): string => {
-  return fs.readFileSync(
-    "./node_modules/@pathscale/bulma-pull-2981-css-var-only/css/bulma.css",
-    "utf-8"
-  ) +
+  return (
+    fs.readFileSync(
+      "./node_modules/@pathscale/bulma-pull-2981-css-var-only/css/bulma.css",
+      "utf-8",
+    ) +
     fs.readFileSync(
       "node_modules/@pathscale/bulma-extensions-css-var/css/bulma-extensions-css-var.css",
-      "utf-8"
-    );
-}
+      "utf-8",
+    )
+  );
+};
+
+export const camelCase = (input: string): string => {
+  const str = input.toLowerCase().replace(/-(.)/g, function (_, group1: string) {
+    return group1.toUpperCase();
+  });
+
+  return str.charAt(0).toUpperCase() + str.slice(1);
+};
