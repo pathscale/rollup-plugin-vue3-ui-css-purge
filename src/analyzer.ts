@@ -63,7 +63,7 @@ export function analyze(
 
         if (
           currentTag.startsWith("v-") &&
-          mappings[camelCase(currentTag)]?.optional.includes(`is-${prop}`)
+          mappings[camelCase(currentTag)]?.optional?.includes(`is-${prop}`)
         ) {
           whitelist.add(`is-${prop}`);
           debug && console.log("whitelisted", `is-${prop}`);
