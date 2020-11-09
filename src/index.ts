@@ -76,6 +76,9 @@ const generator = (options: Options = {}): Plugin => {
         whitelist.add(new RegExp(`${b}\\[.+?\\]`));
       }
 
+      // keeps purger from nuking transitions
+      whitelist.add(/-(leave|enter|appear)(|-(to|from|active))$/);
+
       options.debug &&
         console.log(
           `CSS PURGER - WHITELIST:\n`,
@@ -106,6 +109,7 @@ const generator = (options: Options = {}): Plugin => {
        * marking them as suitable for children whitelist solves this problem
        * */
       const classesForChildren = ["switch"];
+
       // eslint-disable-next-line unicorn/no-reduce
       const whitelistPatternsChildren = classesForChildren.reduce(
         (children: RegExp[], cl: string) =>
