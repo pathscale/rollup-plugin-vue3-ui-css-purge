@@ -5,12 +5,11 @@ import purgecss from "@fullhuman/postcss-purgecss";
 import { analyze } from "./analyzer";
 import { Options } from "./types";
 import { inspect } from "util";
-import { includesMagicStrings, replaceImportsWithBundle, makeVue3UiBundle } from "./utils"
-import postCleaner from "./post-cleaner"
+import { includesMagicStrings, replaceImportsWithBundle, makeVue3UiBundle } from "./utils";
+import postCleaner from "./post-cleaner";
 import * as jsparser from "@babel/parser";
 import fs from "fs";
 import path from "path";
-
 
 const generator = (options: Options = {}): Plugin => {
   const filter = createFilter(options.include, options.exclude ?? ["**/node_modules/**"]);
@@ -22,6 +21,7 @@ const generator = (options: Options = {}): Plugin => {
   ]);
   let foundMain = false;
   let mainLocation = "";
+  let base: string[] = [];
   const whitelist = new Set<RegExp>();
 
   const parserDefaults: jsparser.ParserOptions = {
@@ -58,7 +58,7 @@ const generator = (options: Options = {}): Plugin => {
     name: "vue3-ui-css-purge",
 
     buildStart(inputOpts) {
-      const base = [
+      base = [
         "*",
         "html",
         "head",
@@ -87,7 +87,7 @@ const generator = (options: Options = {}): Plugin => {
       if (isVue3UICSS(id)) return "";
 
       if (includesMagicStrings(code) && !foundMain) {
-        options.debug && console.log("FOUND ENTRY POINT", id)
+        options.debug && console.log("FOUND ENTRY POINT", id);
         const newJs = replaceImportsWithBundle(code);
         const vue3uiBundle = makeVue3UiBundle();
         fs.writeFileSync(`${path.dirname(id)}/vue3-ui-bundle.css`, vue3uiBundle);
@@ -98,27 +98,44 @@ const generator = (options: Options = {}): Plugin => {
 
       if (!id.includes("vue3-ui-bundle.css")) return null;
 
+      /** Very special components have trouble with default purging
+       *
+       * i.e, having whitelist = ["switch", "input", "check"] will purge the following code anyway
+       * .switch input[type=checkbox]+.check { ... }
+       *
+       * marking them as suitable for children whitelist solves this problem
+       * */
+      const classesForChildren = ["switch"];
+      // eslint-disable-next-line unicorn/no-reduce
+      const whitelistPatternsChildren = classesForChildren.reduce(
+        (children: RegExp[], cl: string) =>
+          base.includes(cl) ? [...children, new RegExp(cl)] : [...children],
+        [],
+      );
+
       const purger = postcss(
         purgecss({
           content: [],
-            whitelistPatterns: [...whitelist],
-            whitelistPatternsChildren: [...whitelist],
-            keyframes: true,
+          whitelistPatterns: [...whitelist],
+          whitelistPatternsChildren,
+          keyframes: true,
         }),
       );
 
       const { css } = await purger.process(code, { from: id });
+
       return { code: postCleaner(css) };
     },
 
     buildEnd() {
       try {
-        fs.unlinkSync(mainLocation)
+        fs.unlinkSync(mainLocation);
+      } catch {
+        this.warn(
+          "vue3-ui-bundle.css was not found, please use recomended style packages for vue3-ui",
+        );
       }
-      catch {
-        this.warn("vue3-ui-bundle.css was not found, please use recomended style packages for vue3-ui")
-      }
-    }
+    },
   };
 
   return plugin;
