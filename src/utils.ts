@@ -58,10 +58,18 @@ export const makeVue3UiBundle = (): string => {
   );
 };
 
-export const camelCase = (input: string): string => {
+export const camelCaseUp = (input: string): string => {
   const str = input.toLowerCase().replace(/-(.)/g, function (_, group1: string) {
     return group1.toUpperCase();
   });
 
   return str.charAt(0).toUpperCase() + str.slice(1);
+};
+
+export const camelCaseDown = (input: string): string => {
+  const str = input.toLowerCase().replace(/-(.)/g, function (_, group1: string) {
+    return group1.toUpperCase();
+  });
+
+  return str.charAt(0).toLocaleLowerCase() + str.slice(1);
 };

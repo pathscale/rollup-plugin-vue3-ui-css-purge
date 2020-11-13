@@ -90,7 +90,6 @@ const generator = (options: Options = {}): Plugin => {
       if (isVue3UICSS(id)) return "";
 
       if (includesMagicStrings(code) && !foundMain) {
-        options.debug && console.log("FOUND ENTRY POINT", id);
         const newJs = replaceImportsWithBundle(code);
         const vue3uiBundle = makeVue3UiBundle();
         fs.writeFileSync(`${path.dirname(id)}/vue3-ui-bundle.css`, vue3uiBundle);
@@ -101,12 +100,11 @@ const generator = (options: Options = {}): Plugin => {
 
       if (!id.includes("vue3-ui-bundle.css")) return null;
 
-      /** Very special components have trouble with default purging
-       *
-       * i.e, having whitelist = ["switch", "input", "check"] will purge the following code anyway
+      /**
+       * having as whitelist = ["switch", "input", "check"] will purge the following code anyway
        * .switch input[type=checkbox]+.check { ... }
        *
-       * marking them as suitable for children whitelist solves this problem
+       * whitelisting all children for switch works, TODO: find the proper way to not nuke this
        * */
       const classesForChildren = ["switch"];
 
@@ -127,7 +125,6 @@ const generator = (options: Options = {}): Plugin => {
       );
 
       const { css } = await purger.process(code, { from: id });
-
       return { code: postCleaner(css) };
     },
 

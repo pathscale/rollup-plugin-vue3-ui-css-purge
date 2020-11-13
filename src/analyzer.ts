@@ -4,7 +4,7 @@ import { sync as resolveSync } from "resolve";
 import * as jsparser from "@babel/parser";
 import traverse from "@babel/traverse";
 import * as htmlparser from "htmlparser2";
-import { humanlizePath, normalizePath, camelCase } from "./utils";
+import { humanlizePath, normalizePath, camelCaseUp, camelCaseDown } from "./utils";
 import { parseSFC, isVueSFC } from "./analyzer-utils";
 
 const vue3ui = resolveSync("@pathscale/vue3-ui", {
@@ -17,12 +17,17 @@ const vue3ui = resolveSync("@pathscale/vue3-ui", {
   },
 });
 
-const mappingsFile = path.join(path.dirname(vue3ui), "classes.json");
+const mappingsFile = path.join(path.dirname(vue3ui), "mappings.json");
+const unstableClassesFile = path.join(path.dirname(vue3ui), "classes.json");
+
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const mappings = require(mappingsFile) as Record<
   string,
   { always: string[]; optional: string[]; passthrough: string[] }
 >;
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const unstableClasses = require(unstableClassesFile) as Record<string, Record<string, string[]>>;
 
 export function analyze(
   input: string | string[] | Record<string, string>,
@@ -51,9 +56,20 @@ export function analyze(
 
   const parser = new htmlparser.Parser(
     {
+      // all tags will be whitelisted
+      // aditionally if it happens to be a vue3-ui component, all classes that have no dependencies must be whitelisted as well
       onopentagname(name) {
         whitelist.add(name);
         currentTag = name;
+
+        if (name.startsWith("v-")) {
+          const unstable = unstableClasses[camelCaseUp(currentTag)] ?? {};
+          const keys = Object.keys(unstable);
+
+          for (const cl of keys) {
+            unstable[cl].length === 0 && whitelist.add(cl);
+          }
+        }
       },
 
       onattribute(prop, data) {
@@ -61,12 +77,18 @@ export function analyze(
           whitelist.add(cl);
         }
 
-        if (
-          currentTag.startsWith("v-") &&
-          mappings[camelCase(currentTag)]?.optional?.includes(`is-${prop}`)
-        ) {
-          whitelist.add(`is-${prop}`);
-          debug && console.log("whitelisted", `is-${prop}`);
+        if (currentTag.startsWith("v-")) {
+          if (mappings[camelCaseUp(currentTag)]?.optional?.includes(`is-${prop}`)) {
+            whitelist.add(`is-${prop}`);
+            return;
+          }
+
+          const unstable = unstableClasses[camelCaseUp(currentTag)] ?? {};
+          const keys = Object.keys(unstable);
+
+          for (const cl of keys) {
+            unstable[cl].includes(camelCaseDown(prop)) && whitelist.add(cl);
+          }
         }
       },
     },
