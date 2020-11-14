@@ -76,9 +76,6 @@ const generator = (options: Options = {}): Plugin => {
         whitelist.add(new RegExp(`${b}\\[.+?\\]`));
       }
 
-      // keeps purger from nuking transitions
-      whitelist.add(/-(leave|enter|appear)(|-(to|from|active))$/);
-
       options.debug &&
         console.log(
           `CSS PURGER - WHITELIST:\n`,
