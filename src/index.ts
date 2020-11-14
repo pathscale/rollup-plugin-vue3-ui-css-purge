@@ -88,7 +88,7 @@ const generator = (options: Options = {}): Plugin => {
 
       if (isMain(code) && !foundMain) {
         const newJs = injectFakeBundle(code);
-        const fakeBundle = makeVue3UiBundle();
+        const fakeBundle = makeVue3UiBundle(id);
         fs.writeFileSync(`${path.dirname(id)}/vue3-ui-bundle.css`, fakeBundle);
         foundMain = true;
         fakeBundlePath = `${path.dirname(id)}/vue3-ui-bundle.css`;
