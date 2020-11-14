@@ -1,15 +1,15 @@
-import { createFilter } from "@rollup/pluginutils";
-import { Plugin } from "rollup";
-import postcss from "postcss";
-import purgecss from "@fullhuman/postcss-purgecss";
 import { analyze } from "./analyzer";
-import { Options } from "./types";
+import { createFilter } from "@rollup/pluginutils";
+import { isMain, makeVue3UiBundle, injectFakeBundle } from "./utils";
 import { inspect } from "util";
-import { includesMagicStrings, replaceImportsWithBundle, makeVue3UiBundle } from "./utils";
-import postCleaner from "./post-cleaner";
+import { Options } from "./types";
+import { Plugin } from "rollup";
 import * as jsparser from "@babel/parser";
 import fs from "fs";
 import path from "path";
+import postCleaner from "./post-cleaner";
+import postcss from "postcss";
+import purgecss from "@fullhuman/postcss-purgecss";
 
 const generator = (options: Options = {}): Plugin => {
   const filter = createFilter(options.include, options.exclude ?? ["**/node_modules/**"]);
@@ -20,7 +20,7 @@ const generator = (options: Options = {}): Plugin => {
     "**/node_modules/@pathscale/bulma-pull-2981-css-var-only/**/*.css",
   ]);
   let foundMain = false;
-  let mainLocation = "";
+  let fakeBundlePath = "";
   let base: string[] = [];
   const whitelist = new Set<RegExp>();
 
@@ -86,12 +86,12 @@ const generator = (options: Options = {}): Plugin => {
     async transform(code, id) {
       if (isVue3UICSS(id)) return "";
 
-      if (includesMagicStrings(code) && !foundMain) {
-        const newJs = replaceImportsWithBundle(code);
-        const vue3uiBundle = makeVue3UiBundle();
-        fs.writeFileSync(`${path.dirname(id)}/vue3-ui-bundle.css`, vue3uiBundle);
+      if (isMain(code) && !foundMain) {
+        const newJs = injectFakeBundle(code);
+        const fakeBundle = makeVue3UiBundle();
+        fs.writeFileSync(`${path.dirname(id)}/vue3-ui-bundle.css`, fakeBundle);
         foundMain = true;
-        mainLocation = `${path.dirname(id)}/vue3-ui-bundle.css`;
+        fakeBundlePath = `${path.dirname(id)}/vue3-ui-bundle.css`;
         return newJs;
       }
 
@@ -127,7 +127,7 @@ const generator = (options: Options = {}): Plugin => {
 
     buildEnd() {
       try {
-        fs.unlinkSync(mainLocation);
+        fs.unlinkSync(fakeBundlePath);
       } catch {
         this.warn(
           "vue3-ui-bundle.css was not found, please use recomended style packages for vue3-ui",

@@ -1,11 +1,11 @@
-import path from "path";
-import fs from "fs-extra";
-import { sync as resolveSync } from "resolve";
-import * as jsparser from "@babel/parser";
-import traverse from "@babel/traverse";
-import * as htmlparser from "htmlparser2";
-import { humanlizePath, normalizePath, camelCaseUp, camelCaseDown } from "./utils";
+import { camelCaseDown, camelCaseUp, humanlizePath, normalizePath } from "./utils";
 import { parseSFC, isVueSFC } from "./analyzer-utils";
+import { sync as resolveSync } from "resolve";
+import * as htmlparser from "htmlparser2";
+import * as jsparser from "@babel/parser";
+import fs from "fs-extra";
+import path from "path";
+import traverse from "@babel/traverse";
 
 const vue3ui = resolveSync("@pathscale/vue3-ui", {
   basedir: __dirname,

@@ -31,17 +31,20 @@ export const relativePath = (from: string, to: string): string =>
 
 export const humanlizePath = (file: string): string => relativePath(process.cwd(), file);
 
-export const includesMagicStrings = (code: string): boolean =>
-  code.includes("import '@pathscale/bulma-pull-2981-css-var-only'") &&
-  code.includes("import '@pathscale/bulma-extensions-css-var'");
+/** Every project is expected to have a main file which imports both vue3-ui css packages */
+export const isMain = (code: string): boolean =>
+  new RegExp("^import.*@pathscale/bulma-pull").test(code) &&
+  new RegExp("^import.*@pathscale/bulma-extensions").test(code);
 
-export const replaceImportsWithBundle = (code: string): string => {
-  let newJs = code.replace("import '@pathscale/bulma-pull-2981-css-var-only'", "");
+/** The imports are nuked and replaced with an import for a fake file that will be dynamically created by the plugin */
+export const injectFakeBundle = (code: string): string => {
+  let newJs = code;
+  newJs = newJs.replace(/^import.*@pathscale\/bulma-pull.*/gi, "");
+  newJs = newJs.replace(/^import.*user.css.*/gi, "");
   newJs = newJs.replace(
-    "import '@pathscale/bulma-extensions-css-var'",
+    /^import.*@pathscale\/bulma-extensions.*/gi,
     "import './vue3-ui-bundle.css'",
   );
-
   return newJs;
 };
 
