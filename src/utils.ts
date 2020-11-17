@@ -2,6 +2,8 @@ import path from "path";
 import qs from "query-string";
 import { Query } from "./types";
 import fs from "fs";
+import postcss from "postcss";
+import colorConverter from "postcss-color-converter";
 
 export function parseQuery(id: string): Query {
   const [filename, query] = id.split("?", 2);
@@ -41,10 +43,8 @@ export const injectFakeBundle = (code: string): string => {
   let newJs = code;
   newJs = newJs.replace(/import.*@pathscale\/bulma-pull.*/gi, "");
   newJs = newJs.replace(/import.*user.css.*/gi, "");
-  newJs = newJs.replace(
-    /import.*@pathscale\/bulma-extensions.*/gi,
-    "import './vue3-ui-bundle.css'",
-  );
+  newJs = newJs.replace(/import.*@pathscale\/bulma-extensions.*/gi, "");
+  newJs = `import './vue3-ui-bundle.css'; ${newJs}`;
   return newJs;
 };
 
@@ -69,9 +69,30 @@ export const makeVue3UiBundle = (id: string): string => {
   try {
     override = fs.readFileSync(`${path.dirname(id)}/user.css`, "utf-8");
     console.log(`vue3-ui purger will process ${path.dirname(id)}/user.css`);
-    // eslint-disable-next-line no-empty
-  } catch {
-    /* Nothing to worry about */
+
+    // maps any color declaration to --xxx: hsl(a, b, c)
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    override = postcss(colorConverter({ outputColorFormat: "hsl" })).process(override).css;
+
+    // nuke comments
+    override = override.replace(/\/\*[^*]*\*+([^*/][^*]*\*+)*\//gi, "");
+
+    // map hsl(a, b, c) into for variable declarations, each with postfix -h -s -l -a
+    override = override.replace(
+      /--(.*):\shsl\((\d*),\s*(\d*)%,\s*(\d*)%\);?/gi,
+      (_: string, name: string, h: string, s: string, l: string) => {
+        return `
+        ${_.endsWith(";") ? _ : _.slice(0, -1)}
+        --${name}-h: ${h};
+        --${name}-s: ${s}%;
+        --${name}-l: ${l}%;
+        --${name}-a: 1;`;
+      },
+    );
+
+    // console.log("user.css was transformed into", override)
+  } catch (error) {
+    console.log(error);
   }
 
   const variablesOverwritten = override.match(/(?<=--)(.*?)(?=:)/g) ?? [];
@@ -79,8 +100,8 @@ export const makeVue3UiBundle = (id: string): string => {
   // replaces on bulmaCss the definition of the variables swaping line for line
   variablesOverwritten.forEach(v => {
     const declaration = new RegExp(`.*${v}:.*`);
-    !declaration.exec(bulmaCss) &&
-      console.log(`${v} was not overwritten because it does not exist in bulmaCss`);
+    // !declaration.exec(bulmaCss) &&
+    //   console.log(`${v} was not overwritten because it does not exist in bulmaCss`);
     bulmaCss = bulmaCss.replace(declaration, declaration.exec(override)?.[0] ?? "");
   });
 

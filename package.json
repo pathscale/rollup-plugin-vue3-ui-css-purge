@@ -45,6 +45,7 @@
     "fs-extra": "^9.0.1",
     "htmlparser2": "^4.1.0",
     "postcss": "^7.0.32",
+    "postcss-color-converter": "^1.0.1",
     "query-string": "^6.13.1",
     "resolve": "^1.17.0",
     "rollup": "^2.26.11",

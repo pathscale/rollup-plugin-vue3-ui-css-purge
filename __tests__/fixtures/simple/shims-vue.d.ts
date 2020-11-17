@@ -60,3 +60,5 @@ declare module "@pathscale/vue3-ui" {
     TooltipComponent,
   };
 }
+
+declare module "postcss-color-converter";
