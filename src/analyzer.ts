@@ -23,7 +23,7 @@ const unstableClassesFile = path.join(path.dirname(vue3ui), "classes.json");
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const mappings = require(mappingsFile) as Record<
   string,
-  { always: string[]; optional: string[]; passthrough: string[] }
+  { always: string[]; optional: string[]; unstable: string[] }
 >;
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -154,6 +154,7 @@ export function analyze(
 
         for (const spec of node.specifiers) {
           if (spec.type !== "ImportSpecifier") continue;
+          if (!("name" in spec.imported)) continue;
           const wl = mappings[spec.imported.name]?.always ?? [];
 
           if (wl && debug)
