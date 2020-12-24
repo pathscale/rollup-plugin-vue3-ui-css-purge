@@ -1,24 +1,23 @@
 declare module "@fullhuman/postcss-purgecss" {
   import { PluginCreator } from "postcss";
-  type StringRegExpArray = Array<RegExp | string>;
   type RawContent<T = string> = { extension: string; raw: T };
   type ExtractorFunction<T = string> = (content: T) => string[];
-  type Safelist = StringRegExpArray | ComplexSafelist;
+  type Safelist = (RegExp | string)[] | ComplexSafelist;
   type Extractors = { extensions: string[]; extractor: ExtractorFunction };
 
   type ComplexSafelist = {
-    standard?: StringRegExpArray;
+    standard?: (RegExp | string)[];
     deep?: RegExp[];
     greedy?: RegExp[];
-    variables?: StringRegExpArray;
-    keyframes?: StringRegExpArray;
+    variables?: (RegExp | string)[];
+    keyframes?: (RegExp | string)[];
   };
 
   type Options = {
-    content?: Array<string | RawContent>;
-    contentFunction?: (sourceFile: string) => Array<string | RawContent>;
+    content?: (string | RawContent)[];
+    contentFunction?: (sourceFile: string) => (string | RawContent)[];
     defaultExtractor?: ExtractorFunction;
-    extractors?: Array<Extractors>;
+    extractors?: Extractors[];
     fontFace?: boolean;
     keyframes?: boolean;
     output?: string;
@@ -27,7 +26,7 @@ declare module "@fullhuman/postcss-purgecss" {
     stdout?: boolean;
     variables?: boolean;
     safelist?: Safelist;
-    blocklist?: StringRegExpArray;
+    blocklist?: (RegExp | string)[];
   };
 
   const plugin: PluginCreator<Options>;
