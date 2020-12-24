@@ -1,9 +1,9 @@
 import path from "path";
 import qs from "query-string";
-import { Query } from "./types";
 import fs from "fs";
 import postcss from "postcss";
 import colorConverter from "postcss-color-converter";
+import { Query } from "./types";
 
 export function parseQuery(id: string): Query {
   const [filename, query] = id.split("?", 2);
@@ -71,7 +71,6 @@ export const makeVue3UiBundle = (id: string): string => {
     console.log(`vue3-ui purger will process ${path.dirname(id)}/user.css`);
 
     // maps any color declaration to --xxx: hsl(a, b, c)
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     override = postcss(colorConverter({ outputColorFormat: "hsl" })).process(override).css;
 
     // nuke comments
@@ -109,18 +108,12 @@ export const makeVue3UiBundle = (id: string): string => {
   return bulmaCss + extensionsCss;
 };
 
-export const camelCaseUp = (input: string): string => {
-  const str = input.toLowerCase().replace(/-(.)/g, function (_, group1: string) {
-    return group1.toUpperCase();
-  });
-
+export const camelCaseUp = (s: string): string => {
+  const str = s.toLowerCase().replace(/-(.)/g, (_, $1: string) => $1.toUpperCase());
   return str.charAt(0).toUpperCase() + str.slice(1);
 };
 
-export const camelCaseDown = (input: string): string => {
-  const str = input.toLowerCase().replace(/-(.)/g, function (_, group1: string) {
-    return group1.toUpperCase();
-  });
-
-  return str.charAt(0).toLocaleLowerCase() + str.slice(1);
+export const camelCaseDown = (s: string): string => {
+  const str = s.toLowerCase().replace(/-(.)/g, (_, $1: string) => $1.toUpperCase());
+  return str.charAt(0).toLowerCase() + str.slice(1);
 };
