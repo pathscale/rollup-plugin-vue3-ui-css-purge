@@ -1,6 +1,6 @@
 import path from "path";
 import qs from "query-string";
-import fs from "fs";
+import fs from "fs-extra";
 import postcss from "postcss";
 import colorConverter from "postcss-color-converter";
 import { Query } from "./types";

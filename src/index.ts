@@ -5,7 +5,7 @@ import { inspect } from "util";
 import { Options } from "./types";
 import { Plugin } from "rollup";
 import * as jsparser from "@babel/parser";
-import fs from "fs";
+import fs from "fs-extra";
 import path from "path";
 import postCleaner from "./post-cleaner";
 import postcss from "postcss";
