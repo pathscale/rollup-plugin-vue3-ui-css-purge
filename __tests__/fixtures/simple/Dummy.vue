@@ -42,9 +42,7 @@ export default LoginForm;
       </VSwitch>
     </VField>
     <VField>
-      <VButton type="is-success" @click="sendLogin" :disabled="!isValid">
-        Login
-      </VButton>
+      <VButton type="is-success" @click="sendLogin" :disabled="!isValid">Login</VButton>
     </VField>
   </form>
 </template>
