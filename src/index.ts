@@ -103,20 +103,18 @@ const generator = (options: Options = {}): Plugin => {
        *
        * whitelisting all children for switch works, TODO: find the proper way to not nuke this
        * */
-      const classesForChildren = ["switch"];
+      const deepClasses = ["switch"];
 
       // eslint-disable-next-line unicorn/no-reduce
-      const whitelistPatternsChildren = classesForChildren.reduce(
-        (children: RegExp[], cl: string) =>
-          base.includes(cl) ? [...children, new RegExp(cl)] : [...children],
+      const deep = deepClasses.reduce(
+        (acc: RegExp[], cl: string) => (base.includes(cl) ? [...acc, new RegExp(cl)] : [...acc]),
         [],
       );
 
       const purger = postcss(
         purgecss({
           content: [],
-          whitelistPatterns: [...whitelist],
-          whitelistPatternsChildren,
+          safelist: { standard: [...whitelist], deep },
           keyframes: true,
         }),
       );
