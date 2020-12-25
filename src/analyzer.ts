@@ -10,6 +10,36 @@ import traverse from "@babel/traverse";
 type Package = { main: string; module?: string };
 type Data<K extends string, T> = { [P in K]?: T };
 
+const parserOpts: jsparser.ParserOptions = {
+  sourceType: "unambiguous",
+  plugins: [
+    "asyncGenerators",
+    "bigInt",
+    "classPrivateMethods",
+    "classPrivateProperties",
+    "classProperties",
+    "decimal",
+    "doExpressions",
+    "dynamicImport",
+    "exportDefaultFrom",
+    "functionBind",
+    "functionSent",
+    "importMeta",
+    "jsx",
+    "logicalAssignment",
+    "nullishCoalescingOperator",
+    "numericSeparator",
+    "objectRestSpread",
+    "optionalCatchBinding",
+    "optionalChaining",
+    "partialApplication",
+    "placeholders",
+    "privateIn",
+    "throwExpressions",
+    "typescript",
+  ],
+};
+
 const vue3ui = resolveSync("@pathscale/vue3-ui", {
   basedir: __dirname,
   packageFilter(pkg: Package) {
@@ -30,7 +60,7 @@ export function analyze(
   input: string | string[] | Record<string, string>,
   debug: boolean,
   filter: (id: string) => boolean,
-  parserOpts: jsparser.ParserOptions,
+  alias: Record<string, string>,
 ): string[] {
   const extensions = [".ts", ".tsx", ".mjs", ".js", ".jsx", ".vue"];
 
@@ -102,6 +132,12 @@ export function analyze(
   }
 
   function resolveSource(id: string, value: string): string | undefined {
+    // Resolve aliases
+    for (const [from, to] of Object.entries(alias)) {
+      if (!value.startsWith(from)) continue;
+      value = to + value.slice(from.length);
+    }
+
     const depId = normalizePath(
       resolveSync(value, {
         basedir: path.dirname(id),

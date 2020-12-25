@@ -10,6 +10,8 @@ export interface Options {
   debug?: boolean;
   /** Options for parser */
   parserOpts?: jsparser.ParserOptions;
+  /** Import aliases */
+  alias?: Record<string, string>;
 }
 
 /** Parsed Vue SFC query */

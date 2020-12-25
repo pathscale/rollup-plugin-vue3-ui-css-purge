@@ -4,7 +4,6 @@ import { isMain, makeVue3UiBundle, injectFakeBundle } from "./utils";
 import { inspect } from "util";
 import { Options } from "./types";
 import { Plugin } from "rollup";
-import * as jsparser from "@babel/parser";
 import fs from "fs-extra";
 import path from "path";
 import postCleaner from "./post-cleaner";
@@ -25,36 +24,6 @@ const generator = (options: Options = {}): Plugin => {
   let base: string[] = [];
   const whitelist = new Set<RegExp>();
 
-  const parserDefaults: jsparser.ParserOptions = {
-    sourceType: "unambiguous",
-    plugins: [
-      "asyncGenerators",
-      "bigInt",
-      "classPrivateMethods",
-      "classPrivateProperties",
-      "classProperties",
-      "decimal",
-      "doExpressions",
-      "dynamicImport",
-      "exportDefaultFrom",
-      "functionBind",
-      "functionSent",
-      "importMeta",
-      "jsx",
-      "logicalAssignment",
-      "nullishCoalescingOperator",
-      "numericSeparator",
-      "objectRestSpread",
-      "optionalCatchBinding",
-      "optionalChaining",
-      "partialApplication",
-      "placeholders",
-      "privateIn",
-      "throwExpressions",
-      "typescript",
-    ],
-  };
-
   const plugin: Plugin = {
     name: "vue3-ui-css-purge",
 
@@ -66,10 +35,7 @@ const generator = (options: Options = {}): Plugin => {
         "body",
         "app",
         "div",
-        ...analyze(inputOpts.input, options.debug ?? false, filter, {
-          ...parserDefaults,
-          ...options.parserOpts,
-        }),
+        ...analyze(inputOpts.input, options.debug ?? false, filter, options.alias ?? {}),
       ].map(b => b.replace(/[$()*+.?[\\\]^{|}-]/g, "\\$&"));
 
       for (const b of base) {
