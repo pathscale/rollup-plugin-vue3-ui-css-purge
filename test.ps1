@@ -1,4 +1,4 @@
-$target = "example-tailwind"
+$target = "revenge.studio"
 $command = "build"
 $projRoot = "D:\CodeProjects"
 

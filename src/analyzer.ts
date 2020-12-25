@@ -165,7 +165,7 @@ export function analyze(
     try {
       traverseSource(id, code);
     } catch (error) {
-      debug && console.log(`ANALYZER - PROCESSING ERROR (${humanlizePath(id)}`, error);
+      debug && console.log(`ANALYZER - PROCESSING ERROR (${humanlizePath(id)}):\n`, error);
     }
   }
 
