@@ -3,8 +3,7 @@
 /coverage/
 /node_modules/
 /.cache
-/.vscode
-*.log
 /.eslintcache
 /docs
 /helper/ui
+*.log

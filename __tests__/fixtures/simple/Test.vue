@@ -6,9 +6,9 @@
 </template>
 
 <script>
-import { defineComponent } from "vue";
 import Dummy from "./Dummy.vue";
-export default defineComponent({
+export default {
+  components: { Dummy },
   props: { name: { type: String, default: "John" } },
-});
+};
 </script>

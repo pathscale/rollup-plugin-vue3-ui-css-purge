@@ -3,7 +3,7 @@ import { reactive, watchEffect, computed, onMounted } from "vue";
 // eslint-disable-next-line import/no-unresolved -- components does not exist in npm yet
 import { VField, VButton, VSwitch } from "@pathscale/vue3-ui";
 
-const LoginForm = {
+export default {
   components: { VField, VButton, VSwitch },
   emits: ["login"],
   setup(props, { emit }) {
@@ -17,9 +17,7 @@ const LoginForm = {
     });
 
     const sendLogin = () => {
-      if (isValid.value) {
-        emit("login", state);
-      }
+      if (isValid.value) emit("login", state);
     };
 
     watchEffect(() => {
@@ -30,19 +28,25 @@ const LoginForm = {
     return { state, status, sendLogin, isValid };
   },
 };
-
-export default LoginForm;
 </script>
 
 <template>
   <form>
-    <VField>
-      <VSwitch type="is-primary" passive-type="is-warning" v-model="state.remember">
+    <v-field group-multiline>
+      <VSwitch type="is-outlined" passive-type="is-warning" v-model="state.remember">
         Remember me
       </VSwitch>
-    </VField>
+    </v-field>
     <VField>
-      <VButton type="is-success" @click="sendLogin" :disabled="!isValid">Login</VButton>
+      <VButton
+        expanded
+        type="is-black"
+        size="is-large"
+        class="is-100 has-text-centered"
+        @click="sendLogin"
+        :disabled="!isValid"
+        >Login</VButton
+      >
     </VField>
   </form>
 </template>

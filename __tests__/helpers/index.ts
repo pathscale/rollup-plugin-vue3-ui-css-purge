@@ -6,7 +6,6 @@ import { rollup, InputOptions, OutputOptions } from "rollup";
 import vue3ui from "../../src";
 import { Options } from "../../src/types";
 
-import commonjs from "@rollup/plugin-commonjs";
 import json from "@rollup/plugin-json";
 import resolve from "@rollup/plugin-node-resolve";
 import vue from "rollup-plugin-vue";
@@ -50,9 +49,21 @@ export async function write(data: WriteData): Promise<WriteResult> {
     input,
     plugins: [
       json(),
-      resolve({ preferBuiltins: true }),
-      commonjs(),
-      vue3ui(),
+      resolve({
+        preferBuiltins: true,
+        dedupe: [
+          "vue",
+          "@vue/compiler-core",
+          "@vue/compiler-dom",
+          "@vue/compiler-sfc",
+          "@vue/compiler-ssr",
+          "@vue/reactivity",
+          "@vue/runtime-core",
+          "@vue/runtime-dom",
+          "@vue/shared",
+        ],
+      }),
+      vue3ui({ debug: true }),
       vue({ preprocessStyles: false }),
       styles({ mode: "extract" }),
     ],

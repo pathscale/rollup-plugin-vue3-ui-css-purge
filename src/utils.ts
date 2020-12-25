@@ -4,6 +4,7 @@ import fs from "fs-extra";
 import postcss from "postcss";
 import colorConverter from "postcss-color-converter";
 import { Query } from "./types";
+import resolveAsync, { AsyncOpts } from "resolve";
 
 export function parseQuery(id: string): Query {
   const [filename, query] = id.split("?", 2);
@@ -33,87 +34,83 @@ export const relativePath = (from: string, to: string): string =>
 
 export const humanlizePath = (file: string): string => relativePath(process.cwd(), file);
 
+export const resolveId = async (id: string, options: AsyncOpts = {}): Promise<string | void> =>
+  new Promise(resolve => resolveAsync(id, options, (err, res) => (err ? resolve() : resolve(res))));
+
 /** Every project is expected to have a main file which imports both vue3-ui css packages */
 export const isMain = (code: string): boolean =>
   new RegExp("import.*@pathscale/bulma-pull").test(code) &&
   new RegExp("import.*@pathscale/bulma-extensions").test(code);
 
+export const getDeclaredVariables = (code: string): string[] =>
+  code.match(/(?<=--)(.*?)(?=:)/g) ?? [];
+
+export const isVariableUsed = (v: string, code: string): boolean => code.includes(`var(--${v})`);
+
 /** The imports are nuked and replaced with an import for a fake file that will be dynamically created by the plugin */
-export const injectFakeBundle = (code: string): string => {
-  let newJs = code;
-  newJs = newJs.replace(/import.*@pathscale\/bulma-pull.*/gi, "");
-  newJs = newJs.replace(/import.*user.css.*/gi, "");
-  newJs = newJs.replace(/import.*@pathscale\/bulma-extensions.*/gi, "");
-  newJs = `import './vue3-ui-bundle.css'; ${newJs}`;
-  return newJs;
-};
+export const injectFakeBundle = (code: string): string =>
+  `import './vue3-ui-bundle.css';
+  ${code
+    .replace(/import.*@pathscale\/bulma-pull.*/gi, "")
+    .replace(/import.*@pathscale\/bulma-extensions.*/gi, "")
+    .replace(/import.*user\.css.*/gi, "")}`;
 
-export const makeVue3UiBundle = (id: string): string => {
-  let bulmaCss = "";
-  let extensionsCss = "";
-  let override = "";
+export const makeVue3UiBundle = async (id: string): Promise<string> => {
+  const bulmaCSSFile = await resolveId("@pathscale/bulma-pull-2981-css-var-only");
+  if (!bulmaCSSFile) throw new Error("TRANSFORM - BULMA CSS NOT FOUND");
 
-  try {
-    bulmaCss = fs.readFileSync(
-      "node_modules/@pathscale/bulma-pull-2981-css-var-only/css/bulma.css",
-      "utf-8",
-    );
-    extensionsCss = fs.readFileSync(
-      "node_modules/@pathscale/bulma-extensions-css-var/css/bulma-extensions-css-var.css",
-      "utf-8",
-    );
-  } catch (error) {
-    console.log("there was an error reading vue3-ui recomended style packages", error);
-  }
+  const extensionsCSSFile = await resolveId("@pathscale/bulma-extensions-css-var");
+  if (!extensionsCSSFile) throw new Error("TRANSFORM - EXTENSIONS CSS NOT FOUND");
 
-  try {
-    override = fs.readFileSync(`${path.dirname(id)}/user.css`, "utf-8");
-    console.log(`vue3-ui purger will process ${path.dirname(id)}/user.css`);
+  let bulmaCSS = await fs.readFile(bulmaCSSFile, "utf-8");
+  const extensionsCSS = await fs.readFile(extensionsCSSFile, "utf-8");
 
-    // maps any color declaration to --xxx: hsl(a, b, c)
-    override = postcss(colorConverter({ outputColorFormat: "hsl" })).process(override).css;
+  const userCSSFile = normalizePath(path.dirname(id), "user.css");
+  if (!(await fs.pathExists(userCSSFile))) return bulmaCSS + extensionsCSS;
 
-    // nuke comments
-    override = override.replace(/\/\*[^*]*\*+([^*/][^*]*\*+)*\//gi, "");
+  let userCSS = await fs.readFile(userCSSFile, "utf-8");
+  console.log(`TRANSFORM - USER CSS FOUND (${humanlizePath(userCSSFile)})`);
 
-    // map hsl(a, b, c) into for variable declarations, each with postfix -h -s -l -a
-    override = override.replace(
-      /--(.*):\shsl\((\d*),\s*(\d*)%,\s*(\d*)%\);?/gi,
-      (_: string, name: string, h: string, s: string, l: string) => {
-        return `
-        ${_.endsWith(";") ? _ : _.slice(0, -1)}
+  // maps any color declaration to --xxx: hsl(a, b, c)
+  userCSS = postcss(colorConverter({ outputColorFormat: "hsl" })).process(userCSS).css;
+
+  // nuke comments
+  userCSS = userCSS.replace(/\/\*[^*]*\*+([^*/][^*]*\*+)*\//gi, "");
+
+  // map hsl(a, b, c) into for variable declarations, each with postfix -h -s -l -a
+  userCSS = userCSS.replace(
+    /--(.*):\shsl\((\d*),\s*(\d*)%,\s*(\d*)%\);?/gi,
+    (_: string, name: string, h: string, s: string, l: string) =>
+      `${_.endsWith(";") ? _ : _.slice(0, -1)}
         --${name}-h: ${h};
         --${name}-s: ${s}%;
         --${name}-l: ${l}%;
-        --${name}-a: 1;`;
-      },
-    );
+        --${name}-a: 1;`,
+  );
 
-    // console.log("user.css was transformed into", override)
-  } catch (error) {
-    console.log(error);
+  console.log(`TRANSFORM - USER CSS RESULT:\n`, userCSS);
+
+  // replaces on bulmaCSS the definition of the variables swaping line for line
+  const vars = getDeclaredVariables(userCSS);
+  for (const v of vars) {
+    const decl = new RegExp(`.*${v}:.*`);
+    bulmaCSS = bulmaCSS.replace(decl, decl.exec(userCSS)?.[0] ?? "");
   }
 
-  const variablesOverwritten = override.match(/(?<=--)(.*?)(?=:)/g) ?? [];
-
-  // replaces on bulmaCss the definition of the variables swaping line for line
-  variablesOverwritten.forEach(v => {
-    const declaration = new RegExp(`.*${v}:.*`);
-    // !declaration.exec(bulmaCss) &&
-    //   console.log(`${v} was not overwritten because it does not exist in bulmaCss`);
-    bulmaCss = bulmaCss.replace(declaration, declaration.exec(override)?.[0] ?? "");
-  });
-
-  // bulmaCss = bulmaCss.replace(/:root.*{/g, `:root { ${override}`)
-  return bulmaCss + extensionsCss;
+  return bulmaCSS + extensionsCSS;
 };
 
-export const camelCaseUp = (s: string): string => {
-  const str = s.toLowerCase().replace(/-(.)/g, (_, $1: string) => $1.toUpperCase());
-  return str.charAt(0).toUpperCase() + str.slice(1);
+export const kebabCase = (s: string): string => {
+  const str = s.slice(1).replace(/[A-Z]/g, m => `-${m.toLowerCase()}`);
+  return s.charAt(0).toLowerCase() + str;
 };
 
-export const camelCaseDown = (s: string): string => {
-  const str = s.toLowerCase().replace(/-(.)/g, (_, $1: string) => $1.toUpperCase());
-  return str.charAt(0).toLowerCase() + str.slice(1);
+export const camelCase = (s: string): string => {
+  const str = s.slice(1).replace(/-([a-z])/g, (_, $1: string) => $1.toUpperCase());
+  return s.charAt(0).toLowerCase() + str;
+};
+
+export const pascalCase = (s: string): string => {
+  const str = s.slice(1).replace(/-([a-z])/g, (_, $1: string) => $1.toUpperCase());
+  return s.charAt(0).toUpperCase() + str;
 };

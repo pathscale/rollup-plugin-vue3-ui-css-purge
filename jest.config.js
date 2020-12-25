@@ -2,6 +2,7 @@ module.exports = {
   testEnvironment: "node",
   testRunner: "jest-circus/runner",
   transform: { "^.+\\.tsx?$": "ts-jest" },
+  transformIgnorePatterns: ["<rootDir>/src/.+\\.vue$"],
   globals: { "ts-jest": { tsconfig: { target: "es6" } } },
   testMatch: ["<rootDir>/__tests__/*.(spec|test).[jt]s?(x)"],
   setupFilesAfterEnv: ["<rootDir>/__tests__/setup.ts"],

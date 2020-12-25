@@ -1,4 +1,4 @@
-import { camelCaseDown, camelCaseUp, humanlizePath, normalizePath } from "./utils";
+import { camelCase, humanlizePath, kebabCase, normalizePath, pascalCase } from "./utils";
 import { parseSFC, isVueSFC } from "./analyzer-utils";
 import { sync as resolveSync } from "resolve";
 import * as htmlparser from "htmlparser2";
@@ -7,27 +7,24 @@ import fs from "fs-extra";
 import path from "path";
 import traverse from "@babel/traverse";
 
+type Package = { main: string; module?: string };
+type Data<K extends string, T> = { [P in K]?: T };
+
 const vue3ui = resolveSync("@pathscale/vue3-ui", {
   basedir: __dirname,
-  packageFilter(pkg) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-member-access
+  packageFilter(pkg: Package) {
     if (pkg.module) pkg.main = pkg.module;
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return pkg;
   },
 });
 
-const mappingsFile = path.join(path.dirname(vue3ui), "mappings.json");
-const unstableClassesFile = path.join(path.dirname(vue3ui), "classes.json");
+type Mappings = Data<string, { always: string[]; optional: string[]; unstable: string[] }>;
+const mappingsFile = normalizePath(path.dirname(vue3ui), "mappings.json");
+const mappings = require(mappingsFile) as Mappings; // eslint-disable-line @typescript-eslint/no-var-requires
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const mappings = require(mappingsFile) as Record<
-  string,
-  { always: string[]; optional: string[]; unstable: string[] }
->;
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const unstableClasses = require(unstableClassesFile) as Record<string, Record<string, string[]>>;
+type Unstables = Data<string, Record<string, string[]>>;
+const unstablesFile = normalizePath(path.dirname(vue3ui), "classes.json");
+const unstables = require(unstablesFile) as Unstables; // eslint-disable-line @typescript-eslint/no-var-requires
 
 export function analyze(
   input: string | string[] | Record<string, string>,
@@ -57,37 +54,36 @@ export function analyze(
   const parser = new htmlparser.Parser(
     {
       // all tags will be whitelisted
-      // aditionally if it happens to be a vue3-ui component, all classes that have no dependencies must be whitelisted as well
+      // additionally, if it happens to be a vue3-ui component, all classes that have no dependencies must be whitelisted as well
       onopentagname(name) {
         whitelist.add(name);
-        currentTag = name;
-
-        if (name.startsWith("v-")) {
-          const unstable = unstableClasses[camelCaseUp(currentTag)] ?? {};
-          const keys = Object.keys(unstable);
-
-          for (const cl of keys) {
-            unstable[cl].length === 0 && whitelist.add(cl);
-          }
+        currentTag = pascalCase(name);
+        if (kebabCase(currentTag).startsWith("v-")) {
+          const props = unstables[currentTag] ?? {};
+          const classes = Object.keys(props);
+          for (const cl of classes) props[cl].length === 0 && whitelist.add(cl);
         }
       },
 
       onattribute(prop, data) {
-        for (const cl of data.split(" ")) {
-          whitelist.add(cl);
-        }
+        for (const cl of data.split(" ")) whitelist.add(cl);
 
-        if (currentTag.startsWith("v-")) {
-          if (mappings[camelCaseUp(currentTag)]?.optional?.includes(`is-${prop}`)) {
+        if (kebabCase(currentTag).startsWith("v-")) {
+          // optional
+          if (mappings[currentTag]?.optional.includes(`is-${prop}`)) {
+            console.log(`${currentTag} optional prop:`, `is-${prop}`);
             whitelist.add(`is-${prop}`);
             return;
           }
 
-          const unstable = unstableClasses[camelCaseUp(currentTag)] ?? {};
-          const keys = Object.keys(unstable);
-
-          for (const cl of keys) {
-            unstable[cl].includes(camelCaseDown(prop)) && whitelist.add(cl);
+          // unstable
+          const p = camelCase(prop);
+          const props = unstables[currentTag] ?? {};
+          const classes = Object.keys(props);
+          for (const cl of classes) {
+            const valid = props[cl].includes(p);
+            valid && console.log(`${currentTag} unstable prop:`, p);
+            valid && whitelist.add(cl);
           }
         }
       },
@@ -110,10 +106,8 @@ export function analyze(
       resolveSync(value, {
         basedir: path.dirname(id),
         extensions,
-        packageFilter(pkg) {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-member-access
+        packageFilter(pkg: Package) {
           if (pkg.module) pkg.main = pkg.module;
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-return
           return pkg;
         },
       }),
@@ -155,17 +149,10 @@ export function analyze(
         for (const spec of node.specifiers) {
           if (spec.type !== "ImportSpecifier") continue;
           if (!("name" in spec.imported)) continue;
-          const wl = mappings[spec.imported.name]?.always ?? [];
-
-          if (wl && debug)
-            console.log(
-              `ANALYZER - VUE3-UI COMPONENT (${spec.imported.name}), DEPENDS ON DEFAULT CLASSES`,
-              wl,
-            );
-          if (wl)
-            for (const i of wl) {
-              whitelist.add(i);
-            }
+          const wl = mappings[spec.imported.name]?.always;
+          if (!wl) continue;
+          for (const i of wl) whitelist.add(i);
+          debug && console.log(`ANALYZER - VUE3-UI COMPONENT (${spec.imported.name}):\n`, wl);
         }
       },
     });

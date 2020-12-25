@@ -19,6 +19,7 @@ const generator = (options: Options = {}): Plugin => {
     "**/node_modules/@pathscale/bulma-extensions-css-var/**/*.css",
     "**/node_modules/@pathscale/bulma-pull-2981-css-var-only/**/*.css",
   ]);
+
   let foundMain = false;
   let fakeBundlePath = "";
   let base: string[] = [];
@@ -84,14 +85,17 @@ const generator = (options: Options = {}): Plugin => {
     },
 
     async transform(code, id) {
+      // if (id.includes(".vue?vue&type=template")) console.log(code);
       if (isVue3UICSS(id)) return "";
 
       if (isMain(code) && !foundMain) {
         const newJs = injectFakeBundle(code);
-        const fakeBundle = makeVue3UiBundle(id);
-        fs.writeFileSync(`${path.dirname(id)}/vue3-ui-bundle.css`, fakeBundle);
+        const fakeBundle = await makeVue3UiBundle(id);
+
         foundMain = true;
         fakeBundlePath = `${path.dirname(id)}/vue3-ui-bundle.css`;
+        await fs.writeFile(fakeBundlePath, fakeBundle);
+
         return newJs;
       }
 
@@ -107,7 +111,7 @@ const generator = (options: Options = {}): Plugin => {
 
       // eslint-disable-next-line unicorn/no-reduce
       const deep = deepClasses.reduce(
-        (acc: RegExp[], cl: string) => (base.includes(cl) ? [...acc, new RegExp(cl)] : [...acc]),
+        (acc: RegExp[], cl: string) => (base.includes(cl) ? [...acc, new RegExp(cl)] : acc),
         [],
       );
 
@@ -123,14 +127,11 @@ const generator = (options: Options = {}): Plugin => {
       return { code: postCleaner(css) };
     },
 
-    buildEnd() {
-      try {
-        fs.unlinkSync(fakeBundlePath);
-      } catch {
-        this.warn(
-          "vue3-ui-bundle.css was not found, please use recomended style packages for vue3-ui",
-        );
-      }
+    async buildEnd() {
+      if (!(await fs.pathExists(fakeBundlePath)))
+        this.warn("CSS PURGER - FAKE BUNDLE MISSING (vue3-ui-bundle.css)");
+
+      await fs.remove(fakeBundlePath);
     },
   };
 
