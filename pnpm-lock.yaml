@@ -20,7 +20,7 @@ devDependencies:
   '@commitlint/prompt-cli': 11.0.0
   '@pathscale/bulma-extensions-css-var': 0.0.41
   '@pathscale/bulma-pull-2981-css-var-only': 0.9.6
-  '@pathscale/vue3-ui': 0.8.123_vue@3.0.1
+  '@pathscale/vue3-ui': 0.8.124_vue@3.0.1
   '@rollup/plugin-babel': 5.2.2_909c1d41167457e73a96bf33c609a9e9
   '@rollup/plugin-commonjs': 17.0.0_rollup@2.35.1
   '@rollup/plugin-json': 4.1.0_rollup@2.35.1
@@ -1534,16 +1534,16 @@ packages:
     hasBin: true
     resolution:
       integrity: sha512-CvVW0J/L1prEJIKw10L6fqIcD+F8bbyqcQUdBm9ItZjuTpAEHHSfjd/ScZ02PaHjxxcB197Rty73rz4cZfEl0w==
-  /@pathscale/vue3-ui/0.8.123_vue@3.0.1:
+  /@pathscale/vue3-ui/0.8.124_vue@3.0.1:
     dependencies:
       vue: 3.0.1
     dev: true
     engines:
       node: '>=10.0.0'
     peerDependencies:
-      vue: ^3.0.2
+      vue: ^3.0.4
     resolution:
-      integrity: sha512-ChxL0DKZjxkSuGr/HgaPXTwVYFT8iX6VjJXXj0K7EoKCoB0bHtYKFNLocvh4QXDy0QeZ/muAyov7L3Hqq1WE+A==
+      integrity: sha512-VEty2KL6g2yowexBYkJSBr54EzSS9x9/s2tKfpfX94vkgloXnjbm/ph4XyyQ1GWh39tn9U5fYk2XuIpJxlMKfA==
   /@rollup/plugin-babel/5.2.2_909c1d41167457e73a96bf33c609a9e9:
     dependencies:
       '@babel/core': 7.12.10
@@ -2966,7 +2966,7 @@ packages:
       handlebars: 4.7.6
       json-stringify-safe: 5.0.1
       lodash: 4.17.20
-      meow: 8.0.0
+      meow: 8.1.0
       semver: 6.3.0
       split: 1.0.1
       through2: 4.0.2
@@ -2990,7 +2990,7 @@ packages:
       JSONStream: 1.3.5
       is-text-path: 1.0.1
       lodash: 4.17.20
-      meow: 8.0.0
+      meow: 8.1.0
       split2: 2.2.0
       through2: 4.0.2
       trim-off-newlines: 1.0.1
@@ -4354,7 +4354,7 @@ packages:
     dependencies:
       dargs: 7.0.0
       lodash.template: 4.5.0
-      meow: 8.0.0
+      meow: 8.1.0
       split2: 2.2.0
       through2: 4.0.2
     dev: true
@@ -6155,7 +6155,7 @@ packages:
     dev: true
     resolution:
       integrity: sha512-iV3XNKw06j5Q7mi6h+9vbx23Tv7JkjEVgKHW4pimwyDGWm0OIQntJJ+u1C6mg6mK1EaTv42XQ7w76yuzH7M2cA==
-  /meow/8.0.0:
+  /meow/8.1.0:
     dependencies:
       '@types/minimist': 1.2.1
       camelcase-keys: 6.2.2
@@ -6172,7 +6172,7 @@ packages:
     engines:
       node: '>=10'
     resolution:
-      integrity: sha512-nbsTRz2fwniJBFgUkcdISq8y/q9n9VbiHYbfwklFh5V4V2uAcxtKQkDc0yCLPM/kP0d+inZBewn3zJqewHE7kg==
+      integrity: sha512-fNWkgM1UVMey2kf24yLiccxLihc5W+6zVus3/N0b+VfnJgxV99E9u04X6NAiKdg6ED7DAQBX5sy36NM0QJZkWA==
   /merge-source-map/1.1.0:
     dependencies:
       source-map: 0.6.1
@@ -9418,7 +9418,7 @@ specifiers:
   '@fullhuman/postcss-purgecss': ^3.1.3
   '@pathscale/bulma-extensions-css-var': ^0.0.41
   '@pathscale/bulma-pull-2981-css-var-only': ^0.9.6
-  '@pathscale/vue3-ui': ^0.8.123
+  '@pathscale/vue3-ui': ^0.8.124
   '@rollup/plugin-babel': ^5.2.2
   '@rollup/plugin-commonjs': ^17.0.0
   '@rollup/plugin-json': ^4.1.0

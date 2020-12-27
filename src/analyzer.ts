@@ -134,7 +134,7 @@ export function analyze(
   function resolveSource(id: string, value: string): string | undefined {
     // Resolve aliases
     for (const [from, to] of Object.entries(alias)) {
-      if (!value.startsWith(from)) continue;
+      if (value !== from && !value.startsWith(`${from}/`)) continue;
       value = to + value.slice(from.length);
     }
 

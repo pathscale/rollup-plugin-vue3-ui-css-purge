@@ -60,7 +60,7 @@
     "@commitlint/prompt-cli": "^11.0.0",
     "@pathscale/bulma-extensions-css-var": "^0.0.41",
     "@pathscale/bulma-pull-2981-css-var-only": "^0.9.6",
-    "@pathscale/vue3-ui": "^0.8.123",
+    "@pathscale/vue3-ui": "^0.8.124",
     "@rollup/plugin-babel": "^5.2.2",
     "@rollup/plugin-commonjs": "^17.0.0",
     "@rollup/plugin-json": "^4.1.0",
