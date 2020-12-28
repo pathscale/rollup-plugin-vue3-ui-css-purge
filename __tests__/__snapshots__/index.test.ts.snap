@@ -2378,264 +2378,11 @@ span {
 `;
 
 exports[`basic simple: js 1`] = `
-"import { setDevtoolsHook, initCustomFormatter, computed, ref, watchEffect, openBlock, createBlock, resolveDynamicComponent, withCtx, toDisplayString, createCommentVNode, renderSlot, createVNode, withDirectives, withModifiers, vModelCheckbox, reactive, onMounted, resolveComponent, createTextVNode, createApp } from '@vue/runtime-dom';
-import { getGlobalThis } from '@vue/shared';
-
-function initDev() {
-    const target = getGlobalThis();
-    target.__VUE__ = true;
-    setDevtoolsHook(target.__VUE_DEVTOOLS_GLOBAL_HOOK__);
-    {
-        console.info(\`You are running a development build of Vue.\\\\n\` +
-            \`Make sure to use the production build (*.prod.js) when deploying for production.\`);
-        initCustomFormatter();
-    }
-}
-
-// This entry exports the runtime only, and is built as
-(process.env.NODE_ENV !== 'production') && initDev();
+"import { reactive, computed, onMounted, watchEffect, resolveComponent, openBlock, createBlock, createVNode, withCtx, createTextVNode, toDisplayString, createApp } from 'vue';
+import { VField, VButton, VSwitch } from '@pathscale/vue3-ui';
 
 var script = {
-  name: 'VButton',
-  props: {
-    type: {
-      type: String,
-      default: 'button'
-    },
-    size: String,
-    label: String,
-    rounded: Boolean,
-    loading: Boolean,
-    outlined: Boolean,
-    expanded: Boolean,
-    inverted: Boolean,
-    focused: Boolean,
-    active: Boolean,
-    hovered: Boolean,
-    selected: Boolean,
-    nativeType: {
-      type: String,
-      default: 'button'
-    },
-    tag: {
-      type: String,
-      default: 'button'
-    },
-    light: Boolean
-  },
-  setup(props, { attrs }) {
-    const computedTag = computed(() => attrs.disabled ? 'button' : props.tag);
-    return { computedTag }
-  }
-};
-
-const _hoisted_1 = { key: 0 };
-
-function render(_ctx, _cache, $props, $setup, $data, $options) {
-  return (openBlock(), createBlock(resolveDynamicComponent($setup.computedTag), {
-    class: [\\"button\\", [
-      $props.size,
-      $props.type,
-      {
-        'is-rounded': $props.rounded,
-        'is-loading': $props.loading,
-        'is-outlined': $props.outlined,
-        'is-fullwidth': $props.expanded,
-        'is-inverted': $props.inverted,
-        'is-focused': $props.focused,
-        'is-active': $props.active,
-        'is-hovered': $props.hovered,
-        'is-selected': $props.selected,
-        'is-light': $props.light,
-      }
-    ]],
-    type: $props.nativeType
-  }, {
-    default: withCtx(() => [
-      ($props.label)
-        ? (openBlock(), createBlock(\\"span\\", _hoisted_1, toDisplayString($props.label), 1))
-        : createCommentVNode(\\"\\", true),
-      renderSlot(_ctx.$slots, \\"default\\")
-    ]),
-    _: 3
-  }, 8, [\\"type\\", \\"class\\"]))
-}
-
-script.render = render;
-
-var script$3 = {
-  name: 'VField',
-  props: {
-    type: String,
-    label: String,
-    labelFor: String,
-    message: String,
-    grouped: Boolean,
-    groupMultiline: Boolean,
-    position: String,
-    expanded: Boolean,
-    horizontal: Boolean,
-    addons: Boolean,
-    size: String,
-  },
-  setup(props) {
-    const hasHorizontalLabel = computed(() => props.horizontal && props.label);
-    return { hasHorizontalLabel }
-  }
-};
-
-const _hoisted_1$2 = {
-  key: 2,
-  class: \\"field-body\\"
-};
-
-function render$3(_ctx, _cache, $props, $setup, $data, $options) {
-  return (openBlock(), createBlock(\\"div\\", {
-    class: [\\"field\\", [
-    $props.position, {
-      'is-expanded': $props.expanded,
-      'is-horizontal': $props.horizontal,
-      'is-grouped': $props.grouped,
-      'is-grouped-multiline': $props.groupMultiline,
-      'has-addons': $props.addons
-    }]]
-  }, [
-    ($setup.hasHorizontalLabel)
-      ? (openBlock(), createBlock(\\"div\\", {
-          key: 0,
-          class: [\\"field-label\\", $props.size]
-        }, [
-          createVNode(\\"label\\", {
-            class: \\"label\\",
-            for: $props.labelFor
-          }, toDisplayString($props.label), 9, [\\"for\\"])
-        ], 2))
-      : ($props.label)
-        ? (openBlock(), createBlock(\\"label\\", {
-            key: 1,
-            class: \\"label\\",
-            for: $props.labelFor
-          }, toDisplayString($props.label), 9, [\\"for\\"]))
-        : createCommentVNode(\\"\\", true),
-    ($props.horizontal)
-      ? (openBlock(), createBlock(\\"div\\", _hoisted_1$2, [
-          createVNode(\\"div\\", {
-            class: [\\"field\\", {'is-grouped': $props.grouped}]
-          }, [
-            renderSlot(_ctx.$slots, \\"default\\")
-          ], 2)
-        ]))
-      : renderSlot(_ctx.$slots, \\"default\\", { key: 3 }),
-    ($props.message)
-      ? (openBlock(), createBlock(\\"p\\", {
-          key: 4,
-          class: [\\"help\\", $props.type]
-        }, toDisplayString($props.message), 3))
-      : createCommentVNode(\\"\\", true)
-  ], 2))
-}
-
-script$3.render = render$3;
-
-function checkBenchieSupport() {
-  const isProduction = process.env.NODE_ENV === 'production';
-  if (!isProduction) return false
-  return (
-    typeof t !== 'undefined' &&
-    typeof $__CDN !== 'undefined' &&
-    typeof t === 'function' &&
-    typeof $__CDN === 'string'
-  )
-}
-
-const hasBenchieSupport$1 = checkBenchieSupport();
-
-var script$c = {
-  name: 'VSwitch',
-  props: {
-    modelValue: {
-      type: [String, Number, Boolean, Function, Object, Array, Date],
-    },
-    nativeValue: {
-      type: [String, Number, Boolean, Function, Object, Array, Date],
-    },
-    disabled: {
-      type: Boolean,
-      default: null
-    },
-    type: String,
-    passiveType: String,
-    name: String,
-    required: Boolean,
-    size: String,
-    trueValue: {
-      type: [String, Number, Boolean, Function, Object, Array, Date],
-      default: true
-    },
-    falseValue: {
-      type: [String, Number, Boolean, Function, Object, Array, Date],
-      default: false
-    },
-    rounded: {
-      type: Boolean,
-      default: true
-    },
-    outlined: Boolean
-  },
-  emits: ['update:modelValue'],
-  setup(props, { emit }) {
-    const value = ref(props.modelValue);
-    const passiveClass = computed(() => props.passiveType && \`\${props.passiveType}-passive\`);
-    watchEffect(() => {
-      value.value = props.modelValue;
-    });
-    watchEffect(() => {
-      emit('update:modelValue', value.value);
-    });
-    return { value, passiveClass }
-  }
-};
-
-const _hoisted_1$a = { class: \\"control-label\\" };
-
-function render$c(_ctx, _cache, $props, $setup, $data, $options) {
-  return (openBlock(), createBlock(\\"label\\", {
-    class: [\\"switch\\", [
-      $props.size,
-      {
-        'is-disabled': $props.disabled,
-        'is-rounded': $props.rounded,
-        'is-outlined': $props.outlined,
-      }
-    ]],
-    disabled: $props.disabled
-  }, [
-    withDirectives(createVNode(\\"input\\", {
-      \\"onUpdate:modelValue\\": _cache[1] || (_cache[1] = $event => ($setup.value = $event)),
-      type: \\"checkbox\\",
-      onClick: _cache[2] || (_cache[2] = withModifiers(() => {}, [\\"stop\\"])),
-      disabled: $props.disabled,
-      name: $props.name,
-      required: $props.required,
-      value: $props.nativeValue,
-      \\"true-value\\": $props.trueValue,
-      \\"false-value\\": $props.falseValue
-    }, null, 8, [\\"disabled\\", \\"name\\", \\"required\\", \\"value\\", \\"true-value\\", \\"false-value\\"]), [
-      [vModelCheckbox, $setup.value]
-    ]),
-    createVNode(\\"span\\", {
-      class: [\\"check\\", [$setup.passiveClass, $props.type]]
-    }, null, 2),
-    createVNode(\\"span\\", _hoisted_1$a, [
-      renderSlot(_ctx.$slots, \\"default\\")
-    ])
-  ], 10, [\\"disabled\\"]))
-}
-
-script$c.render = render$c;
-
-var script$1 = {
-  components: { VField: script$3, VButton: script, VSwitch: script$c },
+  components: { VField, VButton, VSwitch },
   emits: [\\"login\\"],
   setup(props, { emit }) {
     const state = reactive({ email: \\"\\", password: \\"\\", remember: false });
@@ -2660,10 +2407,10 @@ var script$1 = {
   },
 };
 
-const _hoisted_1$1 = /*#__PURE__*/createTextVNode(\\" Remember me \\");
+const _hoisted_1 = /*#__PURE__*/createTextVNode(\\" Remember me \\");
 const _hoisted_2 = /*#__PURE__*/createTextVNode(\\"Login\\");
 
-function render$1(_ctx, _cache, $props, $setup, $data, $options) {
+function render(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_VSwitch = resolveComponent(\\"VSwitch\\");
   const _component_v_field = resolveComponent(\\"v-field\\");
   const _component_VButton = resolveComponent(\\"VButton\\");
@@ -2679,12 +2426,12 @@ function render$1(_ctx, _cache, $props, $setup, $data, $options) {
           \\"onUpdate:modelValue\\": _cache[1] || (_cache[1] = $event => ($setup.state.remember = $event))
         }, {
           default: withCtx(() => [
-            _hoisted_1$1
+            _hoisted_1
           ]),
-          _: 1
+          _: 1 /* STABLE */
         }, 8 /* PROPS */, [\\"modelValue\\"])
       ]),
-      _: 1
+      _: 1 /* STABLE */
     }),
     createVNode(_component_VField, null, {
       default: withCtx(() => [
@@ -2699,38 +2446,38 @@ function render$1(_ctx, _cache, $props, $setup, $data, $options) {
           default: withCtx(() => [
             _hoisted_2
           ]),
-          _: 1
+          _: 1 /* STABLE */
         }, 8 /* PROPS */, [\\"onClick\\", \\"disabled\\"])
       ]),
-      _: 1
+      _: 1 /* STABLE */
     })
   ]))
 }
 
-script$1.render = render$1;
-script$1.__file = \\"__tests__/fixtures/simple/Dummy.vue\\";
+script.render = render;
+script.__file = \\"__tests__/fixtures/simple/Dummy.vue\\";
 
-var script$2 = {
-  components: { Dummy: script$1 },
+var script$1 = {
+  components: { Dummy: script },
   props: { name: { type: String, default: \\"John\\" } },
 };
 
-const _hoisted_1$3 = /*#__PURE__*/createTextVNode(\\" Hello \\");
+const _hoisted_1$1 = /*#__PURE__*/createTextVNode(\\" Hello \\");
 const _hoisted_2$1 = { class: \\"name\\" };
 
-function render$2(_ctx, _cache, $props, $setup, $data, $options) {
+function render$1(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_Dummy = resolveComponent(\\"Dummy\\");
 
   return (openBlock(), createBlock(\\"h1\\", null, [
-    _hoisted_1$3,
+    _hoisted_1$1,
     createVNode(\\"span\\", _hoisted_2$1, toDisplayString($props.name), 1 /* TEXT */),
     createVNode(_component_Dummy)
   ]))
 }
 
-script$2.render = render$2;
-script$2.__file = \\"__tests__/fixtures/simple/Test.vue\\";
+script$1.render = render$1;
+script$1.__file = \\"__tests__/fixtures/simple/Test.vue\\";
 
-createApp(script$2).mount(document.body);
+createApp(script$1).mount(document.body);
 "
 `;
