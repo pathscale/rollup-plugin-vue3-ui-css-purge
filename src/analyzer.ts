@@ -131,7 +131,10 @@ export function analyze(
     return;
   }
 
-  function resolveSource(id: string, value: string): string | undefined {
+  function resolveSource(entryId: string, value: string): string | undefined {
+    // Remove query
+    const [id] = entryId.split("?");
+
     // Resolve aliases
     for (const [from, to] of Object.entries(alias)) {
       if (value !== from && !value.startsWith(`${from}/`)) continue;

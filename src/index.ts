@@ -75,7 +75,7 @@ const generator = (options: Options = {}): Plugin => {
        * */
       const deepClasses = ["switch"];
 
-      // eslint-disable-next-line unicorn/no-reduce
+      // eslint-disable-next-line unicorn/no-array-reduce
       const deep = deepClasses.reduce(
         (acc: RegExp[], cl: string) => (base.includes(cl) ? [...acc, new RegExp(cl)] : acc),
         [],
