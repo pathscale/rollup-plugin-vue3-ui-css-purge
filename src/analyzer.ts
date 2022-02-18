@@ -95,8 +95,11 @@ export function analyze(
         }
       },
 
-      onattribute(prop, data) {
+      onattribute(p, data) {
         for (const cl of data.split(" ")) whitelist.add(cl);
+
+        const prop = p.replace(":", "") // remove : from props like :loading -> loading
+
 
         if (kebabCase(currentTag).startsWith("v-")) {
           // optional
