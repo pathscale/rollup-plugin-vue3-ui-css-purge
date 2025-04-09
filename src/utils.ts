@@ -39,7 +39,7 @@ export const resolveId = async (id: string, options: AsyncOpts = {}): Promise<st
 
 /** Every project is expected to have a main file which imports both vue3-ui css packages */
 export const isMain = (code: string): boolean =>
-  new RegExp("import.*@pathscale/bulma-pull").test(code) &&
+  new RegExp("import.*@bulvar/bulma/css/bulma.css").test(code) &&
   new RegExp("import.*@pathscale/bulma-extensions").test(code);
 
 export const getDeclaredVariables = (code: string): string[] =>
@@ -51,12 +51,12 @@ export const isVariableUsed = (v: string, code: string): boolean => code.include
 export const injectFakeBundle = (code: string): string =>
   `import './vue3-ui-bundle.css';
   ${code
-    .replace(/import.*@pathscale\/bulma-pull.*/gi, "")
+    .replace(/import.*@bulvar\/bulma\/css\/bulma\.css.*/gi, "")
     .replace(/import.*@pathscale\/bulma-extensions.*/gi, "")
     .replace(/import.*user\.css.*/gi, "")}`;
 
 export const makeVue3UiBundle = async (id: string): Promise<string> => {
-  const bulmaCSSFile = await resolveId("@pathscale/bulma-pull-2981-css-var-only");
+  const bulmaCSSFile = await resolveId("@bulvar/bulma/css/bulma.css");
   if (!bulmaCSSFile) throw new Error("TRANSFORM - BULMA CSS NOT FOUND");
 
   const extensionsCSSFile = await resolveId("@pathscale/bulma-extensions-css-var");
@@ -88,7 +88,7 @@ export const makeVue3UiBundle = async (id: string): Promise<string> => {
         --${name}-a: 1;`,
   );
 
-  console.log(`TRANSFORM - USER CSS RESULT:\n`, userCSS);
+  // console.log(`TRANSFORM - USER CSS RESULT:\n`, userCSS);
 
   // replaces on bulmaCSS the definition of the variables swaping line for line
   const vars = getDeclaredVariables(userCSS);

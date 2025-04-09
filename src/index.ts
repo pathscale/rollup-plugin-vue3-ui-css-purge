@@ -16,7 +16,7 @@ const generator = (options: Options = {}): Plugin => {
     "**/node_modules/@pathscale/vue3-ui/**/*.css",
     "**/node_modules/@pathscale/bulma-css-var-only/**/*.css",
     "**/node_modules/@pathscale/bulma-extensions-css-var/**/*.css",
-    "**/node_modules/@pathscale/bulma-pull-2981-css-var-only/**/*.css",
+    "**/node_modules/@bulvar/bulma/css/bulma.css",
   ]);
 
   let foundMain = false;

@@ -1,6 +1,6 @@
 {
   "name": "@pathscale/rollup-plugin-vue3-ui-css-purge",
-  "version": "0.0.40",
+  "version": "0.0.41",
   "description": "Automatically remove unused CSS when using vue3-ui",
   "keywords": [
     "rollup",
@@ -59,7 +59,7 @@
     "@commitlint/config-angular": "^11.0.0",
     "@commitlint/prompt-cli": "^11.0.0",
     "@pathscale/bulma-extensions-css-var": "0.0.49-3",
-    "@pathscale/bulma-pull-2981-css-var-only": "^0.9.6-1",
+    "@bulvar/bulma": "^0.11.24",
     "@pathscale/vue3-ui": "^0.8.146",
     "@rollup/plugin-babel": "^5.2.2",
     "@rollup/plugin-commonjs": "^17.0.0",
