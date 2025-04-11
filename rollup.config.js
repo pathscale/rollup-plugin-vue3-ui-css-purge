@@ -1,5 +1,5 @@
 /* eslint node/no-unsupported-features/es-syntax: ["error", { ignores: ["modules"] }] */
-
+// eslint-disable-next-line import/no-named-as-default
 import babel from "@rollup/plugin-babel";
 import commonjs from "@rollup/plugin-commonjs";
 import dts from "rollup-plugin-dts";
