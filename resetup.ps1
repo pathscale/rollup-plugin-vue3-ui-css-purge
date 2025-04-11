@@ -1,4 +1,4 @@
-$manager = "pnpm"
+$manager = "bun"
 
 $disabledList = @(
     "vue-composable"
@@ -27,5 +27,5 @@ $next = $nextList -join ","
 ncu -u --dep "prod,dev" --concurrency 16 -x $disabled
 ncu -u --dep "prod,dev" --concurrency 16 --target newest -f $next
 sort-package-json
-wsl rm -rf node_modules package-lock.json yarn.lock pnpm-lock.yaml
+wsl rm -rf node_modules package-lock.json yarn.lock pnpm-lock.yaml bun.lock
 Invoke-Expression "${manager} i"

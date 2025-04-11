@@ -7,8 +7,6 @@ import fs from "fs-extra";
 import path from "path";
 import traverse from "@babel/traverse";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type Package = { [key: string]: any };
 type Data<K extends string, T> = { [P in K]?: T };
 
 const parserOpts: jsparser.ParserOptions = {
@@ -43,8 +41,7 @@ const parserOpts: jsparser.ParserOptions = {
 
 const vue3ui = resolveSync("@pathscale/vue3-ui", {
   basedir: __dirname,
-  packageFilter(pkg: Package) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  packageFilter(pkg) {
     if (pkg.module) pkg.main = pkg.module;
     return pkg;
   },
@@ -146,10 +143,8 @@ export function analyze(
       resolveSync(value, {
         basedir: path.dirname(id),
         extensions,
-        packageFilter(pkg: Package) {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
+        packageFilter(pkg) {
           if (pkg.module) pkg.main = pkg.module;
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-return
           return pkg;
         },
       }),
