@@ -73,11 +73,8 @@ export function analyze(
   const whitelist = new Set<string>(["*", "html", "head", "body", "div", "app"]);
   let currentTag = "";
 
-  const idList = (Array.isArray(input)
-    ? input
-    : typeof input === "object"
-    ? Object.values(input)
-    : [input]
+  const idList = (
+    Array.isArray(input) ? input : typeof input === "object" ? Object.values(input) : [input]
   ).map(id => normalizePath(path.resolve(id)));
 
   const parser = new htmlparser.Parser(
@@ -97,8 +94,7 @@ export function analyze(
       onattribute(p, data) {
         for (const cl of data.split(" ")) whitelist.add(cl);
 
-        const prop = p.replace(":", "") // remove : from props like :loading -> loading
-
+        const prop = p.replace(":", ""); // remove : from props like :loading -> loading
 
         if (kebabCase(currentTag).startsWith("v-")) {
           // optional
