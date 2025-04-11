@@ -3,12 +3,12 @@ $command = "build"
 $projRoot = "D:\CodeProjects"
 
 Set-Location $projRoot\rollup-plugin-vue3-ui-css-purge
-pnpm run prepublishOnly
+bun run prepublishOnly
 
 Remove-Item -Recurse -Force -ErrorAction SilentlyContinue $projRoot\$target\node_modules\@pathscale\rollup-plugin-vue3-ui-css-purge\dist
 Move-Item $projRoot\rollup-plugin-vue3-ui-css-purge\dist $projRoot\$target\node_modules\@pathscale\rollup-plugin-vue3-ui-css-purge\dist
 
 Set-Location $projRoot\$target\
 # npm link
-pnpm run $command
+bun run $command
 .\node_modules\.bin\serve dist
