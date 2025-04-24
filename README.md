@@ -4,7 +4,7 @@ Purger plugin for rollup hand crafted to match vue3-ui needs
 
 ## Usage
 
-Import plugin and register plugin in _rollup.config.js_
+Import plugin and register plugin in rolldown.config.js\_
 
     import vue3uiPurge from "@pathscale/rollup-plugin-vue3-ui-css-purge";
 
