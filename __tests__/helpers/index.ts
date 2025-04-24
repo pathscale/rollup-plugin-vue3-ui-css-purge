@@ -11,6 +11,8 @@ import resolve from "@rollup/plugin-node-resolve";
 import vue from "rollup-plugin-vue";
 import styles from "rollup-plugin-styles";
 import externals from "rollup-plugin-node-externals";
+import { rolldown } from 'rolldown'
+import nodePolyfills from '@rolldown/plugin-node-polyfills'
 
 export interface WriteData {
   input: string | string[];
@@ -45,32 +47,44 @@ export const fixture = (...args: string[]): string =>
 export async function write(data: WriteData): Promise<WriteResult> {
   const outDir = fixture("dist", data.outDir ?? data.title ?? "");
   const input = Array.isArray(data.input) ? data.input.map(i => fixture(i)) : fixture(data.input);
-  const bundle = await rollup({
-    ...data.inputOpts,
+  // const bundle = await rollup({
+  //   ...data.inputOpts,
+  //   input,
+  //   plugins: [
+  //     externals({ deps: true }),
+  //     json(),
+  //     resolve({
+  //       preferBuiltins: true,
+  //       dedupe: [
+  //         "vue",
+  //         "@vue/compiler-core",
+  //         "@vue/compiler-dom",
+  //         "@vue/compiler-sfc",
+  //         "@vue/compiler-ssr",
+  //         "@vue/reactivity",
+  //         "@vue/runtime-core",
+  //         "@vue/runtime-dom",
+  //         "@vue/shared",
+  //       ],
+  //     }),
+  //     vue3ui({ debug: true }),
+  //     vue({ preprocessStyles: false }),
+  //     styles({ mode: "extract" }),
+  //   ],
+  // });
+  const bundle = await rolldown({
+    // ... other config
     input,
     plugins: [
-      externals({ deps: true }),
-      json(),
-      resolve({
-        preferBuiltins: true,
-        dedupe: [
-          "vue",
-          "@vue/compiler-core",
-          "@vue/compiler-dom",
-          "@vue/compiler-sfc",
-          "@vue/compiler-ssr",
-          "@vue/reactivity",
-          "@vue/runtime-core",
-          "@vue/runtime-dom",
-          "@vue/shared",
-        ],
+      nodePolyfills({
+        // Optional configuration
+        include: ['fs', 'path'], // Only polyfill specific modules
+        exclude: ['crypto'],     // Exclude modules from polyfilling
       }),
-      vue3ui({ debug: true }),
-      vue({ preprocessStyles: false }),
-      styles({ mode: "extract" }),
+      // ... other plugins
     ],
-  });
-
+    platform: 'node' // Important for Node.js polyfilling
+  })
   const { output } = await bundle.write({
     ...data.outputOpts,
     dir: data.outputOpts?.file ? undefined : outDir,

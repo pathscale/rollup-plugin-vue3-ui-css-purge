@@ -1,8 +1,9 @@
-import { defineConfig } from "rolldown";
+import { defineConfig } from 'rolldown';
 
 export default defineConfig({
   input: "src/index.ts",
   output: {
-    file: "bundle.js",
+    file: 'bundle.js',
   },
 });
+
