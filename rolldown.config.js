@@ -5,9 +5,9 @@ import nodePolyfills from '@rolldown/plugin-node-polyfills'
 export default {
     input: "src/index.ts",
     output: {
-      // format: 'esm',
-      // dir: 'dist'
-      file: 'bundle.js'
+      format: 'esm',
+      dir: 'dist'
+      // file: 'bundle.js'
     },
     plugins: [
       {

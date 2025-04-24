@@ -1,16 +1,10 @@
 /* eslint-disable jest/no-export */
 import path from "path";
 import fs from "fs-extra";
-import { rollup, InputOptions, OutputOptions } from "rollup";
+import { InputOptions, OutputOptions } from "rollup";
 
-import vue3ui from "../../src";
 import { Options } from "../../src/types";
 
-import json from "@rollup/plugin-json";
-import resolve from "@rollup/plugin-node-resolve";
-import vue from "rollup-plugin-vue";
-import styles from "rollup-plugin-styles";
-import externals from "rollup-plugin-node-externals";
 import { rolldown } from 'rolldown'
 import nodePolyfills from '@rolldown/plugin-node-polyfills'
 
@@ -47,31 +41,7 @@ export const fixture = (...args: string[]): string =>
 export async function write(data: WriteData): Promise<WriteResult> {
   const outDir = fixture("dist", data.outDir ?? data.title ?? "");
   const input = Array.isArray(data.input) ? data.input.map(i => fixture(i)) : fixture(data.input);
-  // const bundle = await rollup({
-  //   ...data.inputOpts,
-  //   input,
-  //   plugins: [
-  //     externals({ deps: true }),
-  //     json(),
-  //     resolve({
-  //       preferBuiltins: true,
-  //       dedupe: [
-  //         "vue",
-  //         "@vue/compiler-core",
-  //         "@vue/compiler-dom",
-  //         "@vue/compiler-sfc",
-  //         "@vue/compiler-ssr",
-  //         "@vue/reactivity",
-  //         "@vue/runtime-core",
-  //         "@vue/runtime-dom",
-  //         "@vue/shared",
-  //       ],
-  //     }),
-  //     vue3ui({ debug: true }),
-  //     vue({ preprocessStyles: false }),
-  //     styles({ mode: "extract" }),
-  //   ],
-  // });
+
   const bundle = await rolldown({
     // ... other config
     input,
