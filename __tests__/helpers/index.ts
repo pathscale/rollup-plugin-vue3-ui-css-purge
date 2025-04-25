@@ -1,12 +1,13 @@
 /* eslint-disable jest/no-export */
+// eslint-disable @typescript-eslint/no-unsafe-call
 import path from "path";
 import fs from "fs-extra";
-import { InputOptions, OutputOptions } from "rollup";
+import { InputOptions, OutputOptions, rolldown } from "rolldown";
 
 import { Options } from "../../src/types";
 
-import { rolldown } from 'rolldown'
-import nodePolyfills from '@rolldown/plugin-node-polyfills'
+import nodePolyfills from "@rolldown/plugin-node-polyfills";
+import type { OutputChunk, OutputAsset } from "rolldown";
 
 export interface WriteData {
   input: string | string[];
@@ -17,77 +18,140 @@ export interface WriteData {
   outputOpts?: OutputOptions;
 }
 
-export interface WriteResult {
+interface WriteResult {
   js: () => Promise<string[]>;
   css: () => Promise<string[]>;
-  isCss: () => Promise<boolean>;
+  isCss: () => Promise<boolean[]>;
   map: () => Promise<string[]>;
-  isMap: () => Promise<boolean>;
+  isMap: () => Promise<boolean[]>;
   isFile: (file: string) => Promise<boolean>;
 }
 
-async function pathExistsAll(files: string[]): Promise<boolean> {
-  if (files.length === 0) return false;
-  for await (const file of files) {
-    const exists = await fs.pathExists(file);
-    if (!exists) return false;
-  }
-  return true;
+async function pathExistsAll(paths: string[]): Promise<boolean[]> {
+  return Promise.all(
+    paths.map(async p =>
+      fs
+        .access(p)
+        .then(() => true)
+        .catch(() => false),
+    ),
+  );
+}
+// Process output files
+function isChunk(f: OutputChunk | OutputAsset): f is OutputChunk {
+  return f.type === "chunk";
 }
 
-export const fixture = (...args: string[]): string =>
-  path.normalize(path.join(__dirname, "..", "fixtures", ...args));
+function isCssAsset(f: OutputAsset): boolean {
+  return f.fileName.endsWith(".css");
+}
 
-export async function write(data: WriteData): Promise<WriteResult> {
-  const outDir = fixture("dist", data.outDir ?? data.title ?? "");
-  const input = Array.isArray(data.input) ? data.input.map(i => fixture(i)) : fixture(data.input);
+function isSourceMap(f: OutputAsset): boolean {
+  return f.fileName.endsWith(".css.map");
+}
 
+export async function write(data: {
+  input: string | string[];
+  outDir?: string;
+  title?: string;
+  inputOpts?: Partial<InputOptions>;
+  outputOpts?: Partial<OutputOptions>;
+}): Promise<WriteResult> {
+  const outDir = path.join("dist", data.outDir ?? data.title ?? "");
+  const input = Array.isArray(data.input)
+    ? data.input.map(i => path.join(i))
+    : path.join(data.input);
+
+  // Rolldown-specific configuration
   const bundle = await rolldown({
-    // ... other config
     input,
+    platform: "node",
+    // Merged configuration
+    ...data.inputOpts,
+    // Rolldown-native options
+    resolve: {
+      mainFields: ["module", "main"],
+      extensions: [".mjs", ".js", ".ts", ".json", ".node"],
+    },
     plugins: [
-      nodePolyfills({
-        // Optional configuration
-        include: ['fs', 'path'], // Only polyfill specific modules
-        exclude: ['crypto'],     // Exclude modules from polyfilling
-      }),
-      // ... other plugins
+      {
+        name: "json-handler",
+        transform(code: string, id: string) {
+          if (id.endsWith(".json")) {
+            return `export default ${code}`;
+          }
+        },
+      },
+      {
+        name: "node-resolve",
+        resolveId(source: string) {
+          if (source === "vue" || source.startsWith("@vue/")) {
+            return { id: source, external: true };
+          }
+        },
+      },
+      {
+        name: "css-extract",
+        transform(code: string, id: string) {
+          if (id.endsWith(".css")) {
+            return `export default ${JSON.stringify(code)}`;
+          }
+        },
+      },
+      nodePolyfills(),
     ],
-    platform: 'node' // Important for Node.js polyfilling
-  })
-  const { output } = await bundle.write({
-    ...data.outputOpts,
-    dir: data.outputOpts?.file ? undefined : outDir,
-    file: data.outputOpts?.file && path.join(outDir, data.outputOpts.file),
+
+    treeshake: {
+      moduleSideEffects: (id: string) =>
+        id.includes(".css") || id.includes(".vue") || id.includes(".json"),
+    },
   });
 
-  const js = output
-    .filter(f => f.type === "chunk")
-    .map(f => path.join(outDir, f.fileName))
-    .sort();
-
-  const css = output
-    .filter(f => f.type === "asset" && f.fileName.endsWith(".css"))
-    .map(f => path.join(outDir, f.fileName))
-    .sort();
-
-  const map = output
-    .filter(f => f.type === "asset" && f.fileName.endsWith(".css.map"))
-    .map(f => path.join(outDir, f.fileName))
-    .sort();
-
-  const res: WriteResult = {
-    js: async () => Promise.all(js.map(async f => fs.readFile(f, "utf8"))),
-    css: async () => Promise.all(css.map(async f => fs.readFile(f, "utf8"))),
-    isCss: async () => pathExistsAll(css),
-    map: async () => Promise.all(map.map(async f => fs.readFile(f, "utf8"))),
-    isMap: async () => pathExistsAll(map),
-    isFile: async file => fs.pathExists(path.join(outDir, file)),
+  // Output handling
+  const outputConfig = {
+    dir: outDir,
+    format: "es" as const,
+    ...(data.outputOpts ?? {}),
   };
 
-  return res;
+  if (data.outputOpts?.file) {
+    const { ...rest } = outputConfig;
+    outputConfig.file = path.join(outDir, data.outputOpts.file);
+    Object.assign(outputConfig, rest);
+  }
+
+  const { output } = await bundle.write(outputConfig);
+
+  const jsFiles = output
+    .filter((f): f is OutputChunk => isChunk(f))
+    .map(f => path.join(outDir, f.fileName))
+    .sort();
+
+  const cssFiles = output
+    .filter((f): f is OutputAsset => !isChunk(f) && isCssAsset(f))
+    .map(f => path.join(outDir, f.fileName))
+    .sort();
+
+  const mapFiles = output
+    .filter((f): f is OutputAsset => !isChunk(f) && isSourceMap(f))
+    .map(f => path.join(outDir, f.fileName))
+    .sort();
+
+  return {
+    js: async () => Promise.all(jsFiles.map(async f => fs.readFile(f, "utf8"))),
+    css: async () => Promise.all(cssFiles.map(async f => fs.readFile(f, "utf8"))),
+    isCss: async () => pathExistsAll(cssFiles),
+    map: async () => Promise.all(mapFiles.map(async f => fs.readFile(f, "utf8"))),
+    isMap: async () => pathExistsAll(mapFiles),
+    isFile: async (file: string) =>
+      fs
+        .access(path.join(outDir, file))
+        .then(() => true)
+        .catch(() => false),
+  };
 }
 
+/////
 export interface TestData extends WriteData {
   title: string;
   files?: string[];
@@ -99,11 +163,25 @@ export function validate(data: TestData): void {
   test(data.title, async () => {
     if (data.shouldFail) {
       // eslint-disable-next-line jest/no-conditional-expect -- helper utility
-      await expect(write(data)).rejects.toThrowErrorMatchingSnapshot();
+      await expect(
+        write({
+          input: data.input,
+          outDir: data.outDir,
+          title: data.title,
+          inputOpts: data.inputOpts as Partial<InputOptions>,
+          outputOpts: data.outputOpts as Partial<OutputOptions>,
+        }),
+      ).rejects.toThrowErrorMatchingSnapshot();
       return;
     }
 
-    const res = await write(data);
+    const res = await write({
+      input: data.input,
+      outDir: data.outDir,
+      title: data.title,
+      inputOpts: data.inputOpts as Partial<InputOptions>,
+      outputOpts: data.outputOpts as Partial<OutputOptions>,
+    });
 
     for (const f of await res.js()) expect(f).toMatchSnapshot("js");
 

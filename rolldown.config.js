@@ -1,28 +1,26 @@
-import { rolldown } from 'rolldown'
-import nodePolyfills from '@rolldown/plugin-node-polyfills'
-// import vue from "rollup-plugin-vue";
-
-export default {
+/* eslint node/no-unsupported-features/es-syntax: ["error", { ignores: ["modules"] }] */
+// eslint-disable-next-line import/no-named-as-default
+export default [
+  {
     input: "src/index.ts",
     output: {
-      format: 'esm',
-      dir: 'dist'
-      // file: 'bundle.js'
+      format: "esm",
+      dir: "dist",
     },
     plugins: [
       {
-        name: 'patch-path-imports',
+        name: "patch-path-imports",
         transform(code) {
           return code.replace(
-            /import\s*\{([^}]*)(win32|posix)([^}]*)\}\s*from\s*['"]path['"]/g,
-            'import { $1 } from "path"'
-          )
-        }
-      }
+            /import\s*{([^}]*)(win32|posix)([^}]*)}\s*from\s*["']path["']/g,
+            'import { $1 } from "path"',
+          );
+        },
+      },
     ],
-    platform: 'node',
+    platform: "node",
     define: {
-      'process.env.NODE_ENV': JSON.stringify('production')
+      "process.env.NODE_ENV": JSON.stringify("production"),
     },
-}
-
+  },
+];
