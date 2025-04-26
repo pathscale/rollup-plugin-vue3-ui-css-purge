@@ -10,7 +10,6 @@ import json from "@rollup/plugin-json";
 import resolve from "@rollup/plugin-node-resolve";
 import vue from "rollup-plugin-vue";
 import styles from "rollup-plugin-styles";
-import externals from "rollup-plugin-node-externals";
 
 export interface WriteData {
   input: string | string[];
@@ -49,7 +48,6 @@ export async function write(data: WriteData): Promise<WriteResult> {
     ...data.inputOpts,
     input,
     plugins: [
-      externals({ deps: true }),
       json(),
       resolve({
         preferBuiltins: true,

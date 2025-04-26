@@ -13,6 +13,7 @@ $nextList = @(
     "vuex"
     "vue-router"
     "rollup-plugin-vue"
+    "rolldown-plugin-vue"
     "@vue/compiler-sfc"
 
     "@pathscale/vue3-ui"
