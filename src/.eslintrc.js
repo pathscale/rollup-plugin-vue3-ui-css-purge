@@ -1,4 +1,5 @@
-const { join } = require("path");
+import { join } from "path";
+
 const extensions = [".ts", ".mjs", ".js", ".json"];
 module.exports = {
   root: true,
