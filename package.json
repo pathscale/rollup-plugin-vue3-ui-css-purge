@@ -64,6 +64,7 @@
     "@pathscale/vue3-ui": "^0.8.146",
     "@semantic-release/changelog": "^5.0.1",
     "@semantic-release/git": "^9.0.0",
+    "@types/bun": "1.2.12",
     "@types/fs-extra": "^9.0.6",
     "@types/htmlparser2": "^3.10.2",
     "@types/jest": "^26.0.19",
@@ -73,6 +74,8 @@
     "@typescript-eslint/parser": "^4.11.1",
     "@vue/compiler-sfc": "3.0.7",
     "builtin-modules": "^3.2.0",
+    "bun": "1.2.12",
+    "bun-types": "1.2.12",
     "eslint": "^7.16.0",
     "eslint-config-prettier": "^7.1.0",
     "eslint-import-resolver-node": "^0.3.4",
@@ -95,8 +98,5 @@
   "peerDependencies": {
     "rollup": "^2.2.0",
     "typescript": "^4.0.0"
-  },
-  "engines": {
-    "node": ">=10"
   }
 }
