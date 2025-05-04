@@ -28,8 +28,7 @@
     "dist"
   ],
   "scripts": {
-    "prebuild": "shx rm -rf dist",
-    "build": "rollup -c --environment NODE_ENV:production",
+    "build": "bun run build.ts",
     "commit": "commit",
     "prelint": "prettier -l --write .",
     "lint": "eslint --ext .ts,.js --fix .",
