@@ -1,9 +1,7 @@
-import { mkdir, rename } from "fs/promises";
-import { cp } from "fs/promises";
-import { rm } from "fs/promises";
-import { join } from "path";
 import bunfig from "./bunfig.toml";
 import pkg from "./package.json";
+import { join } from "path";
+import { mkdir, rename, cp, rm } from "fs/promises";
 
 await rm(bunfig.build.outdir, { recursive: true, force: true });
 await mkdir(bunfig.build.outdir, { recursive: true });
