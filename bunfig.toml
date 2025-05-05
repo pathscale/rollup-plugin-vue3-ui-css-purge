@@ -11,3 +11,19 @@ cache = true
 
 # Use frozen installation (equivalent to npm's --frozen-lockfile)
 frozen = true
+
+[build]
+# Default entry points
+entrypoints = ["src/index.ts"]
+
+# Default target platform
+target = "node"
+
+# Default output directory
+outdir = "dist"
+
+# Default sourcemap generation
+sourcemap = "inline"
+
+# Default external dependencies
+external = ["consolidate", "rollup"]
